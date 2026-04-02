@@ -8,6 +8,8 @@ from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 import yt_dlp
 
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -151,6 +153,11 @@ def cancel_job(job_id):
     job["cancelled"] = True
     return jsonify({"ok": True})
 
+@app.route("/")
+def home():
+    return send_file("index.html")
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
