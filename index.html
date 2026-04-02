@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WAVEFORM-3000</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --amber:#FFB000;--amber-dim:#7A5200;--amber-glow:#FF8C00;
+  --green:#00FF41;--green-dim:#004D13;
+  --red:#FF3131;
+  --bg:#0A0800;--crt:#0D0A00;--panel:#110E00;--border:#3D2E00;
+}
+html,body{height:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--amber);font-family:'VT323',monospace;font-size:20px;line-height:1.4}
+
+/* CRT SCANLINES */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,0.35) 0px,rgba(0,0,0,0.35) 1px,transparent 1px,transparent 3px);
+  animation:flicker 9s infinite;
+}
+@keyframes flicker{0%,94%,100%{opacity:1}95%{opacity:.9}97%{opacity:.85}99%{opacity:.95}}
+
+/* CRT vignette */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.8) 100%)}
+
+.page{position:relative;z-index:1;max-width:540px;margin:0 auto;padding:0 14px 80px}
+
+/* HEADER */
+header{padding:30px 0 18px;text-align:center}
+.spool-row{display:inline-flex;align-items:center;gap:14px;margin-bottom:14px}
+.spool{width:30px;height:30px;border:3px solid var(--amber);border-radius:50%;position:relative;animation:spin 8s linear infinite;box-shadow:0 0 10px rgba(255,176,0,0.4)}
+.spool::after{content:'';position:absolute;inset:6px;border:2px solid var(--amber);border-radius:50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spool.fast{animation-duration:1s}
+
+.h1{font-family:'Press Start 2P',monospace;font-size:clamp(18px,6.5vw,34px);color:var(--amber);letter-spacing:2px;line-height:1.3;text-shadow:0 0 12px var(--amber),0 0 40px rgba(255,176,0,0.4),3px 3px 0 var(--amber-dim);display:block;margin-bottom:8px}
+.h1 em{color:var(--amber-glow);font-style:normal}
+.model{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber-dim);letter-spacing:4px}
+
+/* GLITCH LINE */
+.gline{height:2px;background:var(--amber);margin:18px 0;position:relative;overflow:hidden;box-shadow:0 0 8px var(--amber)}
+.gline::after{content:'';position:absolute;top:0;left:-40%;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.7),transparent);animation:sweep 3.5s linear infinite}
+@keyframes sweep{from{left:-40%}to{left:130%}}
+
+/* LED DISPLAY */
+.led{background:var(--crt);border:3px solid var(--amber-dim);border-top-color:var(--amber);border-left-color:var(--amber);padding:14px;margin:16px 0;position:relative;box-shadow:inset 0 0 30px rgba(0,0,0,0.9),0 0 12px rgba(255,176,0,0.12)}
+.led::before{content:'◄ STATUS ►';position:absolute;top:-11px;left:14px;background:var(--bg);padding:0 8px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--amber-dim);letter-spacing:2px}
+.led-row{display:flex;gap:8px;margin-bottom:12px}
+.led-cell{flex:1;text-align:center;padding:8px 4px;border:1px solid var(--amber-dim);background:var(--panel)}
+.led-num{font-family:'Press Start 2P',monospace;font-size:clamp(14px,4.5vw,22px);color:var(--green);text-shadow:0 0 10px var(--green),0 0 24px rgba(0,255,65,0.3);display:block;line-height:1}
+.led-lbl{font-size:13px;color:var(--amber-dim);margin-top:4px;display:block;letter-spacing:1px}
+
+/* EQ BARS */
+.eq{display:flex;align-items:flex-end;gap:3px;height:30px}
+.eb{flex:1;min-height:3px;border-radius:1px 1px 0 0;animation:eqwave .6s ease-in-out infinite alternate}
+.eb:nth-child(odd){background:var(--green);box-shadow:0 0 4px var(--green)}
+.eb:nth-child(even){background:var(--amber);box-shadow:0 0 4px var(--amber)}
+.eb:nth-child(1){animation-delay:0s}.eb:nth-child(2){animation-delay:.05s}.eb:nth-child(3){animation-delay:.1s}
+.eb:nth-child(4){animation-delay:.15s}.eb:nth-child(5){animation-delay:.2s}.eb:nth-child(6){animation-delay:.25s}
+.eb:nth-child(7){animation-delay:.2s}.eb:nth-child(8){animation-delay:.15s}.eb:nth-child(9){animation-delay:.1s}
+.eb:nth-child(10){animation-delay:.05s}.eb:nth-child(11){animation-delay:0s}.eb:nth-child(12){animation-delay:.05s}
+.eb:nth-child(13){animation-delay:.1s}.eb:nth-child(14){animation-delay:.15s}.eb:nth-child(15){animation-delay:.1s}
+.eb:nth-child(16){animation-delay:.05s}.eb:nth-child(17){animation-delay:0s}.eb:nth-child(18){animation-delay:.05s}
+.eb:nth-child(19){animation-delay:.1s}.eb:nth-child(20){animation-delay:.15s}
+@keyframes eqwave{from{height:3px}to{height:28px}}
+.eq.stopped .eb{animation:none;height:3px}
+.eq.done .eb{animation:none;height:28px;background:var(--green) !important;box-shadow:0 0 8px var(--green) !important}
+
+/* DIVIDER */
+.div{display:flex;align-items:center;gap:0;margin:22px 0 12px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);letter-spacing:2px}
+.div-line{flex:1;height:1px;background:var(--border)}
+.div-txt{padding:0 10px;white-space:nowrap}
+
+/* SONG BOX */
+.sbox{background:var(--panel);border:2px solid var(--amber-dim);border-top-color:var(--amber);border-left-color:var(--amber);box-shadow:0 0 14px rgba(255,176,0,0.08)}
+.sbox-top{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:2px solid var(--border);background:rgba(255,176,0,0.03)}
+.sbox-title{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber);letter-spacing:2px}
+.btn-all{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--green);background:var(--panel);border:2px solid var(--green-dim);padding:6px 10px;cursor:pointer;letter-spacing:1px;transition:all .1s;text-shadow:0 0 6px var(--green)}
+.btn-all:hover{background:var(--green-dim);border-color:var(--green);box-shadow:0 0 10px rgba(0,255,65,.3)}
+
+.scroll{max-height:320px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--amber-dim) var(--panel)}
+
+.trow{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid rgba(61,46,0,.5);cursor:pointer;transition:background .08s;position:relative;user-select:none}
+.trow:last-child{border:none}
+.trow:hover{background:rgba(255,176,0,.04)}
+.trow.on{background:rgba(0,255,65,.05)}
+.trow.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green);box-shadow:0 0 8px var(--green)}
+.chk{width:16px;height:16px;border:2px solid var(--amber-dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:8px;color:transparent;transition:all .1s}
+.trow.on .chk{border-color:var(--green);color:var(--green);background:rgba(0,255,65,.1);box-shadow:0 0 8px rgba(0,255,65,.4)}
+.tnum{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);min-width:22px;text-align:right}
+.tname{font-size:18px;color:var(--amber);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow.on .tname{color:var(--green);text-shadow:0 0 6px rgba(0,255,65,.3)}
+
+/* ADD CUSTOM */
+.abox{background:var(--panel);border:2px solid var(--amber-dim);border-top-color:var(--amber);border-left-color:var(--amber);margin-top:20px;box-shadow:0 0 14px rgba(255,176,0,.08)}
+.abox-head{padding:10px 14px;border-bottom:2px solid var(--border);background:rgba(255,176,0,.03);font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber);letter-spacing:2px}
+.arow{display:flex}
+.ainput{flex:1;background:transparent;border:none;outline:none;padding:12px 14px;font-family:'VT323',monospace;font-size:20px;color:var(--amber);caret-color:var(--green)}
+.ainput::placeholder{color:var(--amber-dim)}
+.aplus{background:var(--amber);border:none;padding:0 18px;font-family:'Press Start 2P',monospace;font-size:14px;color:var(--bg);cursor:pointer;box-shadow:inset -3px -3px 0 var(--amber-dim),inset 2px 2px 0 rgba(255,255,255,.25);transition:opacity .1s}
+.aplus:hover{opacity:.85}
+.aplus:active{transform:translate(2px,2px)}
+.ctrack{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-top:1px solid rgba(61,46,0,.5);font-size:17px;color:var(--green);text-shadow:0 0 6px rgba(0,255,65,.3);animation:blink-in .25s ease}
+@keyframes blink-in{0%{opacity:0}40%{opacity:1}60%{opacity:0}100%{opacity:1}}
+.rmx{background:none;border:none;font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber-dim);cursor:pointer;padding:4px 6px;transition:color .1s}
+.rmx:hover{color:var(--red);text-shadow:0 0 6px var(--red)}
+
+/* DOWNLOAD BTN */
+.dlwrap{margin:24px 0 6px}
+.dlbtn{width:100%;background:var(--amber);border:none;padding:18px 20px;font-family:'Press Start 2P',monospace;font-size:clamp(10px,3.2vw,15px);color:var(--bg);cursor:pointer;letter-spacing:2px;text-transform:uppercase;position:relative;box-shadow:inset -4px -4px 0 var(--amber-dim),inset 4px 4px 0 rgba(255,255,255,.25),0 0 24px rgba(255,176,0,.25);transition:transform .1s;display:flex;align-items:center;justify-content:center;gap:14px}
+.dlbtn:hover:not(:disabled){box-shadow:inset -4px -4px 0 var(--amber-dim),inset 4px 4px 0 rgba(255,255,255,.25),0 0 36px rgba(255,176,0,.5)}
+.dlbtn:active:not(:disabled){transform:translate(2px,2px);box-shadow:inset -2px -2px 0 var(--amber-dim),inset 2px 2px 0 rgba(255,255,255,.2)}
+.dlbtn:disabled{opacity:.35;cursor:not-allowed}
+.barr{font-size:1.3em;animation:bouncearr 1s ease-in-out infinite}
+@keyframes bouncearr{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+.dlbtn:disabled .barr{animation:none}
+.dlhint{text-align:center;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);letter-spacing:2px;margin-top:8px}
+
+/* PROGRESS */
+.pbox{display:none;background:var(--panel);border:2px solid var(--amber);box-shadow:0 0 20px rgba(255,176,0,.2);padding:20px 16px;margin:20px 0;position:relative}
+.pbox::before{content:'◄ DOWNLOADING ►';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 10px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--amber);letter-spacing:3px;white-space:nowrap;text-shadow:0 0 8px var(--amber)}
+.pbox.on{display:block;animation:blink-in .3s ease}
+.ptop{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.ptitle{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber-dim);letter-spacing:2px}
+.pcount{font-family:'Press Start 2P',monospace;font-size:14px;color:var(--green);text-shadow:0 0 8px var(--green)}
+.ptrack{height:16px;background:var(--crt);border:2px solid var(--amber-dim);margin-bottom:12px;overflow:hidden}
+.pfill{height:100%;width:0%;transition:width .5s steps(20);background:repeating-linear-gradient(90deg,var(--green) 0,var(--green) 8px,rgba(0,255,65,.35) 8px,rgba(0,255,65,.35) 10px);box-shadow:0 0 10px var(--green)}
+.pmsg{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);letter-spacing:1px;text-align:center}
+.blink{animation:blinkc 1s step-end infinite}
+@keyframes blinkc{50%{opacity:0}}
+
+/* ZIP READY */
+.zbox{display:none;background:var(--panel);border:3px solid var(--green);box-shadow:0 0 30px rgba(0,255,65,.2),inset 0 0 30px rgba(0,255,65,.03);padding:28px 16px;margin:20px 0;text-align:center;position:relative}
+.zbox::before{content:'◄ DOWNLOAD READY ►';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 10px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--green);letter-spacing:3px;white-space:nowrap;text-shadow:0 0 10px var(--green)}
+.zbox.on{display:block;animation:blink-in .4s ease}
+.zicon{display:block;font-size:52px;margin-bottom:12px;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0) rotate(-15deg)}to{transform:scale(1) rotate(0)}}
+.ztitle{font-family:'Press Start 2P',monospace;font-size:clamp(11px,3.5vw,17px);color:var(--green);text-shadow:0 0 14px var(--green),0 0 30px rgba(0,255,65,.4);margin-bottom:8px;line-height:1.6}
+.zmeta{font-size:17px;color:var(--amber-dim);margin-bottom:22px}
+.gbtn{width:100%;background:var(--green);border:none;padding:16px 20px;font-family:'Press Start 2P',monospace;font-size:clamp(9px,2.8vw,13px);color:var(--bg);cursor:pointer;letter-spacing:2px;box-shadow:inset -4px -4px 0 var(--green-dim),inset 4px 4px 0 rgba(255,255,255,.2),0 0 20px rgba(0,255,65,.3);margin-bottom:12px;transition:all .1s}
+.gbtn:hover{box-shadow:inset -4px -4px 0 var(--green-dim),inset 4px 4px 0 rgba(255,255,255,.2),0 0 30px rgba(0,255,65,.5)}
+.gbtn:active{transform:translate(2px,2px)}
+.rbtn{background:none;border:2px solid var(--amber-dim);padding:10px 20px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);cursor:pointer;letter-spacing:2px;transition:all .1s}
+.rbtn:hover{border-color:var(--amber);color:var(--amber)}
+
+/* FAILED */
+.fbox{display:none;border:2px solid rgba(255,49,49,.4);background:var(--panel);margin:16px 0;overflow:hidden}
+.fbox.on{display:block;animation:blink-in .3s ease}
+.fhead{padding:10px 14px;background:rgba(255,49,49,.08);border-bottom:1px solid rgba(255,49,49,.2);font-family:'Press Start 2P',monospace;font-size:7px;color:var(--red);letter-spacing:2px;text-shadow:0 0 8px rgba(255,49,49,.5)}
+.fitem{padding:8px 14px;font-size:15px;color:var(--amber-dim);border-bottom:1px solid rgba(61,46,0,.4)}
+.fitem:last-child{border:none}
+
+/* FOOTER */
+footer{text-align:center;padding:20px 0;border-top:1px solid var(--border);margin-top:20px}
+.flogo{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--amber);text-shadow:0 0 10px var(--amber);letter-spacing:4px;display:block;margin-bottom:10px}
+.fsub{font-family:'Press Start 2P',monospace;font-size:6px;color:var(--amber-dim);letter-spacing:2px;line-height:2.2}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--panel)}
+::-webkit-scrollbar-thumb{background:var(--amber-dim)}
+::-webkit-scrollbar-thumb:hover{background:var(--amber)}
+
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.shake{animation:shake .35s ease}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="spool-row">
+    <div class="spool" id="sl"></div>
+    <span class="h1">WAVE<em>FORM</em></span>
+    <div class="spool" id="sr"></div>
+  </div>
+  <div class="model">MODEL 3000 · BULK MUSIC RIPPER</div>
+</header>
+
+<div class="gline"></div>
+
+<div class="led">
+  <div class="led-row">
+    <div class="led-cell"><span class="led-num" id="n-tot">00</span><span class="led-lbl">TOTAL</span></div>
+    <div class="led-cell"><span class="led-num" id="n-sel">00</span><span class="led-lbl">SEL</span></div>
+    <div class="led-cell"><span class="led-num" id="n-cus">00</span><span class="led-lbl">CUSTOM</span></div>
+  </div>
+  <div class="eq" id="eq">
+    <div class="eb"></div><div class="eb"></div><div class="eb"></div><div class="eb"></div>
+    <div class="eb"></div><div class="eb"></div><div class="eb"></div><div class="eb"></div>
+    <div class="eb"></div><div class="eb"></div><div class="eb"></div><div class="eb"></div>
+    <div class="eb"></div><div class="eb"></div><div class="eb"></div><div class="eb"></div>
+    <div class="eb"></div><div class="eb"></div><div class="eb"></div><div class="eb"></div>
+  </div>
+</div>
+
+<div class="gline"></div>
+
+<div class="div"><div class="div-line"></div><span class="div-txt">▶ CREATOR'S PLAYLIST</span><div class="div-line"></div></div>
+
+<div class="sbox">
+  <div class="sbox-top">
+    <span class="sbox-title">▼ PLAYLIST</span>
+    <button class="btn-all" id="selall" onclick="toggleAll()">SELECT ALL</button>
+  </div>
+  <div class="scroll" id="track-list"></div>
+</div>
+
+<div class="div" style="margin-top:22px"><div class="div-line"></div><span class="div-txt">▶ ADD TRACK</span><div class="div-line"></div></div>
+
+<div class="abox">
+  <div class="abox-head">► INSERT CUSTOM TRACK</div>
+  <div class="arow">
+    <input class="ainput" id="ainput" type="text" placeholder="SONG NAME + ARTIST..."/>
+    <button class="aplus" onclick="addCustom()">+</button>
+  </div>
+  <div id="clist"></div>
+</div>
+
+<div class="zbox" id="zbox">
+  <span class="zicon">💾</span>
+  <div class="ztitle">TRANSFER<br/>COMPLETE</div>
+  <div class="zmeta" id="zmeta">ALL TRACKS ENCODED → ZIP READY</div>
+  <button class="gbtn" onclick="grabZip()">⬇ EJECT &amp; SAVE ZIP</button>
+  <button class="rbtn" onclick="resetAll()">↺ REWIND / START OVER</button>
+</div>
+
+<div class="pbox" id="pbox">
+  <div class="ptop">
+    <span class="ptitle">BUFFERING...</span>
+    <span class="pcount" id="pcnt">00/00</span>
+  </div>
+  <div class="ptrack"><div class="pfill" id="pfill"></div></div>
+  <div class="pmsg" id="pmsg">SEARCHING YOUTUBE<span class="blink">_</span></div>
+</div>
+
+<div class="dlwrap">
+  <button class="dlbtn" id="dlbtn" onclick="startDownload()">
+    <span class="barr">▼</span>RIP &amp; DOWNLOAD<span class="barr">▼</span>
+  </button>
+  <div class="dlhint" id="dlhint">SELECT TRACKS THEN PRESS RIP</div>
+</div>
+
+<div class="fbox" id="fbox">
+  <div class="fhead">!! FAILED TRACKS !!</div>
+  <div id="flist"></div>
+</div>
+
+<footer>
+  <span class="flogo">▓▓ WAVEFORM-3000 ▓▓</span>
+  <div class="fsub">YT-DLP · FFMPEG · FLASK<br/>FOR PERSONAL USE ONLY</div>
+</footer>
+
+</div>
+<script>
+const API='http://localhost:5000/api';
+let songs=[],sel=new Set(),custom=[],jobId=null,poller=null,allOn=false;
+const DEF=["Icarus - Bastille","Pompeii - Bastille","Achilles Come Down - Gang of Youths","Glory and Gore - Lorde","Touch the Sky - Julie Fowlis","Centuries - Fall Out Boy","I Am the Best - 2NE1","Touch-Tone Telephone - Lemon Demon","Cult of Dionysus - The Orion Experience","Closure-Hayd","Changes - Hayd","Kahani - Pritam", "Azad - Bombay Bandook","Abhi Kuch Dino Se - Pritam","Chandaniya - 2 States","Chand Si Mehbooba Ho Meri","Chaudhary - Mame Khan","Udaariyan - Satinder Sartaaj","Boss B*tch - Doja Cat","Sawan Mein - Falguni Pathak","Dhuru Nachya - Abhigya The Band","Huri Chalyo - Prashant"];
+const p2=n=>String(n).padStart(2,'0');
+
+async function init(){
+  try{const r=await fetch(`${API}/songs`);songs=(await r.json()).songs;}
+  catch(e){songs=DEF;}
+  render();updateLED();
+}
+
+function render(){
+  document.getElementById('track-list').innerHTML=songs.map((s,i)=>`
+    <div class="trow${sel.has(i)?' on':''}" onclick="tog(${i},this)">
+      <div class="chk">${sel.has(i)?'✓':''}</div>
+      <span class="tnum">${p2(i+1)}</span>
+      <span class="tname">${s.toUpperCase()}</span>
+    </div>`).join('');
+  document.getElementById('n-tot').textContent=p2(songs.length);
+}
+
+function tog(i,el){
+  sel.has(i)?(sel.delete(i),el.classList.remove('on'),el.querySelector('.chk').textContent='')
+            :(sel.add(i),el.classList.add('on'),el.querySelector('.chk').textContent='✓');
+  updateLED();
+}
+
+function toggleAll(){
+  allOn=!allOn;
+  songs.forEach((_,i)=>allOn?sel.add(i):sel.delete(i));
+  document.getElementById('selall').textContent=allOn?'DESELECT ALL':'SELECT ALL';
+  render();updateLED();
+}
+
+function addCustom(){
+  const inp=document.getElementById('ainput'),v=inp.value.trim();
+  if(!v)return;custom.push(v);inp.value='';renderC();updateLED();
+}
+document.getElementById('ainput').addEventListener('keydown',e=>{if(e.key==='Enter')addCustom();});
+
+function removeC(i){custom.splice(i,1);renderC();updateLED();}
+function renderC(){
+  document.getElementById('clist').innerHTML=custom.map((s,i)=>`
+    <div class="ctrack"><span>► ${s.toUpperCase()}</span><button class="rmx" onclick="removeC(${i})">DEL</button></div>`).join('');
+}
+
+function updateLED(){
+  const s=sel.size,c=custom.length,t=s+c;
+  document.getElementById('n-sel').textContent=p2(s);
+  document.getElementById('n-cus').textContent=p2(c);
+  document.getElementById('dlhint').textContent=t>0?`${p2(t)} TRACK${t!==1?'S':''} QUEUED — READY TO RIP`:'SELECT TRACKS THEN PRESS RIP';
+}
+
+async function startDownload(){
+  const q=[...Array.from(sel).map(i=>songs[i]),...custom];
+  if(!q.length){const b=document.getElementById('dlbtn');b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);return;}
+  document.getElementById('dlbtn').disabled=true;
+  document.getElementById('zbox').classList.remove('on');
+  document.getElementById('fbox').classList.remove('on');
+  document.getElementById('pbox').classList.add('on');
+  document.getElementById('eq').classList.remove('stopped','done');
+  try{
+    const r=await fetch(`${API}/download`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({songs:q})});
+    jobId=(await r.json()).job_id;poll();
+  }catch(e){
+    document.getElementById('pmsg').innerHTML='!! CONNECTION ERROR — IS FLASK RUNNING?';
+    document.getElementById('dlbtn').disabled=false;
+  }
+}
+
+function poll(){
+  poller=setInterval(async()=>{
+    try{
+      const d=await(await fetch(`${API}/status/${jobId}`)).json();
+      const pct=d.total>0?Math.round(d.progress/d.total*100):0;
+      document.getElementById('pfill').style.width=pct+'%';
+      document.getElementById('pcnt').textContent=`${p2(d.progress)}/${p2(d.total)}`;
+      document.getElementById('pmsg').innerHTML=
+        d.status==='running'?`RIPPING TRACK ${p2(d.progress+1)} OF ${p2(d.total)}<span class="blink">_</span>`
+        :`ZIPPING FILES<span class="blink">_</span>`;
+      if(d.status==='done'){clearInterval(poller);done(d);}
+    }catch(e){}
+  },1500);
+}
+
+function done(d){
+  document.getElementById('pbox').classList.remove('on');
+  document.getElementById('eq').classList.add('done');
+  document.getElementById('zbox').classList.add('on');
+  const ok=d.total-(d.failed_count||0);
+  document.getElementById('zmeta').textContent=`${p2(ok)} TRACKS ENCODED · ${d.failed_count>0?d.failed_count+' FAILED':'ALL CLEAR ✓'}`;
+  if(d.failed_count>0&&d.failed){
+    document.getElementById('fbox').classList.add('on');
+    document.getElementById('flist').innerHTML=d.failed.map(f=>`<div class="fitem">!! ${f.song.toUpperCase()}</div>`).join('');
+  }
+  document.getElementById('dlbtn').disabled=false;
+  [document.getElementById('sl'),document.getElementById('sr')].forEach(s=>{s.style.animationDuration='.8s';setTimeout(()=>s.style.animationDuration='8s',3000);});
+}
+
+function grabZip(){if(jobId)window.location.href=`${API}/download/${jobId}/zip`;}
+
+function resetAll(){
+  sel.clear();custom=[];jobId=null;allOn=false;clearInterval(poller);
+  document.getElementById('selall').textContent='SELECT ALL';
+  ['zbox','fbox','pbox'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById('pfill').style.width='0%';
+  document.getElementById('dlbtn').disabled=false;
+  document.getElementById('eq').classList.remove('done');
+  render();renderC();updateLED();
+}
+
+init();
+</script>
+</body>
+</html>
