@@ -1,160 +1,146 @@
 {
   "songs": {
-    "b6283e55-6d1e-484d-958c-8561bad16aa3": {
-      "id": "b6283e55-6d1e-484d-958c-8561bad16aa3",
+    "8325de1b-a954-4530-9469-090bf9ec66ac": {
+      "id": "8325de1b-a954-4530-9469-090bf9ec66ac",
       "title": "Icarus Bastille",
       "artist": "Icarus Bastille",
+      "path": "music\\8325de1b-a954-4530-9469-090bf9ec66ac.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:18:10.629854",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Icarus Bastille.mp3"
+      "added": "2026-05-13T12:05:35.043186"
     },
-    "0edc006d-cebf-454b-b6b2-7d7cd109b918": {
-      "id": "0edc006d-cebf-454b-b6b2-7d7cd109b918",
+    "bf159206-4701-4604-9b64-7af69acdaf79": {
+      "id": "bf159206-4701-4604-9b64-7af69acdaf79",
       "title": "Pompeii Bastille",
       "artist": "Pompeii Bastille",
+      "path": "music\\bf159206-4701-4604-9b64-7af69acdaf79.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:18:23.110697",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Pompeii Bastille.mp3"
+      "added": "2026-05-13T12:05:46.092110"
     },
-    "f789ea7a-181c-436e-ac35-af06e0ed242e": {
-      "id": "f789ea7a-181c-436e-ac35-af06e0ed242e",
+    "f2d45fc1-acec-4341-9a90-5e6d59d87eb2": {
+      "id": "f2d45fc1-acec-4341-9a90-5e6d59d87eb2",
       "title": "Achilles Come Down Gang of Youths",
       "artist": "Achilles Come Down Gang of Youths",
+      "path": "music\\f2d45fc1-acec-4341-9a90-5e6d59d87eb2.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:18:50.318310",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Achilles Come Down Gang of Youths.mp3"
+      "added": "2026-05-13T12:06:20.207993"
     },
-    "13c04899-72e9-4573-9717-7d793e8f1e89": {
-      "id": "13c04899-72e9-4573-9717-7d793e8f1e89",
-      "title": "Touch the Sky Julie Fowlis",
-      "artist": "Touch the Sky Julie Fowlis",
-      "duration": 0,
-      "added": "2026-05-13T02:19:11.563966",
-      "path": "downloads\\d37c1c95-4f11-49e3-a91c-b9f3b66ea4ac\\Touch the Sky Julie Fowlis.mp3"
-    },
-    "5d2c28a6-7d41-4c3e-962a-51d859c62661": {
-      "id": "5d2c28a6-7d41-4c3e-962a-51d859c62661",
+    "51acf204-4a38-434e-b1b6-7f3b9b0d504e": {
+      "id": "51acf204-4a38-434e-b1b6-7f3b9b0d504e",
       "title": "Glory and Gore Lorde",
       "artist": "Glory and Gore Lorde",
+      "path": "music\\51acf204-4a38-434e-b1b6-7f3b9b0d504e.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:19:15.110615",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Glory and Gore Lorde.mp3"
+      "added": "2026-05-13T12:06:31.474530"
     },
-    "ac16464a-3f57-4fe9-90e7-c856173f4ab7": {
-      "id": "ac16464a-3f57-4fe9-90e7-c856173f4ab7",
+    "e6f19e4e-bd12-437e-908f-deaa5f24fa98": {
+      "id": "e6f19e4e-bd12-437e-908f-deaa5f24fa98",
       "title": "Touch the Sky Julie Fowlis",
       "artist": "Touch the Sky Julie Fowlis",
+      "path": "music\\e6f19e4e-bd12-437e-908f-deaa5f24fa98.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:19:39.811279",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Touch the Sky Julie Fowlis.mp3"
+      "added": "2026-05-13T12:06:40.650643"
     },
-    "21c1f85e-de85-41ce-b7bf-ff31393c7209": {
-      "id": "21c1f85e-de85-41ce-b7bf-ff31393c7209",
+    "62410125-839f-4035-bb05-faa365d6855d": {
+      "id": "62410125-839f-4035-bb05-faa365d6855d",
       "title": "Centuries Fall Out Boy",
       "artist": "Centuries Fall Out Boy",
+      "path": "music\\62410125-839f-4035-bb05-faa365d6855d.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:20:15.782203",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Centuries Fall Out Boy.mp3"
+      "added": "2026-05-13T12:07:03.886173"
     },
-    "a3976346-441e-4256-b82d-e2282a385ea0": {
-      "id": "a3976346-441e-4256-b82d-e2282a385ea0",
+    "2e7ef463-6f31-41ec-915c-604bd071f811": {
+      "id": "2e7ef463-6f31-41ec-915c-604bd071f811",
       "title": "I Am the Best 2NE1",
       "artist": "I Am the Best 2NE1",
+      "path": "music\\2e7ef463-6f31-41ec-915c-604bd071f811.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:20:27.431340",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\I Am the Best 2NE1.mp3"
+      "added": "2026-05-13T12:07:16.579574"
     },
-    "32f4ecc8-cb39-4fc5-9039-ec7979467414": {
-      "id": "32f4ecc8-cb39-4fc5-9039-ec7979467414",
+    "c63984d9-ed22-424e-ad3a-b0b07f4396dd": {
+      "id": "c63984d9-ed22-424e-ad3a-b0b07f4396dd",
       "title": "Touch-Tone Telephone Lemon Demon",
       "artist": "Touch-Tone Telephone Lemon Demon",
+      "path": "music\\c63984d9-ed22-424e-ad3a-b0b07f4396dd.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:21:05.697677",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Touch-Tone Telephone Lemon Demon.mp3"
+      "added": "2026-05-13T12:08:12.558958"
     },
-    "b26e3129-bd4a-445c-ad2b-aed2248cc5ed": {
-      "id": "b26e3129-bd4a-445c-ad2b-aed2248cc5ed",
-      "title": "Cult of Dionysus The Orion Experience",
-      "artist": "Cult of Dionysus The Orion Experience",
-      "duration": 0,
-      "added": "2026-05-13T02:21:16.694379",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Cult of Dionysus The Orion Experience.mp3"
-    },
-    "9fe72e6e-8cfb-47db-b49d-20c2843f8f98": {
-      "id": "9fe72e6e-8cfb-47db-b49d-20c2843f8f98",
-      "title": "Cult of Dionysus The Orion Experience",
-      "artist": "Cult of Dionysus The Orion Experience",
-      "duration": 0,
-      "added": "2026-05-13T02:21:35.457026",
-      "path": "downloads\\452bee8a-1a39-4607-ad24-7e4605e1b5d5\\Cult of Dionysus The Orion Experience.mp3"
-    },
-    "1cbc0cde-1e64-4437-b64d-c175dab6cd80": {
-      "id": "1cbc0cde-1e64-4437-b64d-c175dab6cd80",
-      "title": "Abhi Kuch Dino Se Pritam",
-      "artist": "Abhi Kuch Dino Se Pritam",
-      "duration": 0,
-      "added": "2026-05-13T02:21:37.293350",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Abhi Kuch Dino Se Pritam.mp3"
-    },
-    "6ab93d09-29c4-4876-8388-fb56e2095f4d": {
-      "id": "6ab93d09-29c4-4876-8388-fb56e2095f4d",
-      "title": "Chandaniya 2 States",
-      "artist": "Chandaniya 2 States",
-      "duration": 0,
-      "added": "2026-05-13T02:21:58.873793",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Chandaniya 2 States.mp3"
-    },
-    "4b12fa13-f571-4b0f-b16e-536ce43d419e": {
-      "id": "4b12fa13-f571-4b0f-b16e-536ce43d419e",
-      "title": "Chand Si Mehbooba Ho Meri",
-      "artist": "Chand Si Mehbooba Ho Meri",
-      "duration": 0,
-      "added": "2026-05-13T02:22:09.206519",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Chand Si Mehbooba Ho Meri.mp3"
-    },
-    "f2ebca41-dcef-40b1-8714-ca23302a0ef1": {
-      "id": "f2ebca41-dcef-40b1-8714-ca23302a0ef1",
-      "title": "Chaudhary Mame Khan",
-      "artist": "Chaudhary Mame Khan",
-      "duration": 0,
-      "added": "2026-05-13T02:22:30.700111",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Chaudhary Mame Khan.mp3"
-    },
-    "a5ed8db7-25a5-4bc8-8085-065f29f05b44": {
-      "id": "a5ed8db7-25a5-4bc8-8085-065f29f05b44",
-      "title": "Sawan Mein Lag Gayi Aag Falguni Pathak",
-      "artist": "Sawan Mein Lag Gayi Aag Falguni Pathak",
-      "duration": 0,
-      "added": "2026-05-13T02:22:44.542558",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Sawan Mein Lag Gayi Aag Falguni Pathak.mp3"
-    },
-    "3f5746d8-3b5b-4a5d-81f7-b1d77c70abc6": {
-      "id": "3f5746d8-3b5b-4a5d-81f7-b1d77c70abc6",
-      "title": "Dhuro Nachyo Abhigya The Artist",
-      "artist": "Dhuro Nachyo Abhigya The Artist",
-      "duration": 0,
-      "added": "2026-05-13T02:23:06.209776",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Dhuro Nachyo Abhigya The Artist.mp3"
-    },
-    "dce35194-8793-4a06-aecf-b30f92b2d56f": {
-      "id": "dce35194-8793-4a06-aecf-b30f92b2d56f",
+    "2f5c8c6d-2702-4051-ad03-725ed55304d9": {
+      "id": "2f5c8c6d-2702-4051-ad03-725ed55304d9",
       "title": "Huri Chalyo Prashant",
       "artist": "Huri Chalyo Prashant",
+      "path": "music\\2f5c8c6d-2702-4051-ad03-725ed55304d9.mp3",
       "duration": 0,
-      "added": "2026-05-13T02:23:28.633904",
-      "path": "downloads\\31ef73c2-d7f2-4e5c-96fa-591e4e32517a\\Huri Chalyo Prashant.mp3"
+      "added": "2026-05-13T12:34:08.290673"
+    },
+    "02eeb809-75be-4130-8e5b-b61609256d5b": {
+      "id": "02eeb809-75be-4130-8e5b-b61609256d5b",
+      "title": "Dhuro Nachyo Abhigya The Artist",
+      "artist": "Dhuro Nachyo Abhigya The Artist",
+      "path": "music\\02eeb809-75be-4130-8e5b-b61609256d5b.mp3",
+      "duration": 0,
+      "added": "2026-05-13T12:34:44.496201"
+    },
+    "cc52346f-d40e-488a-828e-b11ba2e5f216": {
+      "id": "cc52346f-d40e-488a-828e-b11ba2e5f216",
+      "title": "Sawan Mein Lag Gayi Aag Falguni Pathak",
+      "artist": "Sawan Mein Lag Gayi Aag Falguni Pathak",
+      "path": "music\\cc52346f-d40e-488a-828e-b11ba2e5f216.mp3",
+      "duration": 0,
+      "added": "2026-05-13T12:34:56.595827"
+    },
+    "aee6d0ef-b714-45f2-9549-d0cde18ee7ae": {
+      "id": "aee6d0ef-b714-45f2-9549-d0cde18ee7ae",
+      "title": "Chaudhary Mame Khan",
+      "artist": "Chaudhary Mame Khan",
+      "path": "music\\aee6d0ef-b714-45f2-9549-d0cde18ee7ae.mp3",
+      "duration": 0,
+      "added": "2026-05-13T12:35:38.260561"
+    },
+    "eb2eb717-e11b-4c9a-8b72-01a1ce74b3fc": {
+      "id": "eb2eb717-e11b-4c9a-8b72-01a1ce74b3fc",
+      "title": "Chand Si Mehbooba Ho Meri",
+      "artist": "Chand Si Mehbooba Ho Meri",
+      "path": "music\\eb2eb717-e11b-4c9a-8b72-01a1ce74b3fc.mp3",
+      "duration": 0,
+      "added": "2026-05-13T12:36:07.884938"
+    },
+    "b59941c6-595c-45cd-aeee-8fc6288ae88d": {
+      "id": "b59941c6-595c-45cd-aeee-8fc6288ae88d",
+      "title": "Chandaniya 2 States",
+      "artist": "Chandaniya 2 States",
+      "path": "music\\b59941c6-595c-45cd-aeee-8fc6288ae88d.mp3",
+      "duration": 0,
+      "added": "2026-05-13T12:36:22.338291"
+    },
+    "7c16e37f-0a48-49c9-ada7-84488c71b1d1": {
+      "id": "7c16e37f-0a48-49c9-ada7-84488c71b1d1",
+      "title": "Abhi Kuch Dino Se Pritam",
+      "artist": "Abhi Kuch Dino Se Pritam",
+      "path": "music\\7c16e37f-0a48-49c9-ada7-84488c71b1d1.mp3",
+      "duration": 0,
+      "added": "2026-05-13T12:36:57.782557"
+    },
+    "000f9caf-f115-4e74-8090-57794b401b3c": {
+      "id": "000f9caf-f115-4e74-8090-57794b401b3c",
+      "title": "Cult of Dionysus The Orion Experience",
+      "artist": "Cult of Dionysus The Orion Experience",
+      "path": "music\\000f9caf-f115-4e74-8090-57794b401b3c.mp3",
+      "duration": 0,
+      "added": "2026-05-13T12:37:14.845902"
     }
   },
   "playlists": {
     "54fc6b86-d409-4f78-b686-2e64017cc9f8": {
       "id": "54fc6b86-d409-4f78-b686-2e64017cc9f8",
       "name": "Greek",
-      "songs": [
-        "0edc006d-cebf-454b-b6b2-7d7cd109b918",
-        "b6283e55-6d1e-484d-958c-8561bad16aa3",
-        "13c04899-72e9-4573-9717-7d793e8f1e89"
-      ],
+      "songs": [],
       "created": "2026-05-13T02:19:04.766732"
+    },
+    "65524288-fedc-4e1f-9a20-0c3d45d51bb8": {
+      "id": "65524288-fedc-4e1f-9a20-0c3d45d51bb8",
+      "name": "Hindi",
+      "songs": [],
+      "created": "2026-05-13T11:30:45.601794"
     }
   }
 }
