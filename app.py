@@ -92,10 +92,7 @@ def init_db_pool():
 
 @contextmanager
 def get_db():
-    return psycopg2.connect(
-        os.environ["DATABASE_URL"],
-       
-    )
+    psycopg2.connect(os.environ["DATABASE_URL"])
 
 def init_schema():
     """Create database schema at startup"""
