@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+
+load_dotenv()
 import os
 import shutil
 import threading
@@ -20,7 +23,7 @@ from flask import render_template
 
 
 # Import auth module
-from auth import generate_token, verify_token, require_auth, handle_login, handle_signup
+from services.auth import  generate_token, verify_token, require_auth, handle_login, handle_signup,handle_verify_email,handle_set_password
 
 # ============ SETUP & CONFIGURATION ============
 
@@ -154,21 +157,63 @@ def login():
 
 @app.route("/api/auth/signup", methods=["POST"])
 def signup():
-    """Signup with username + password"""
+
     try:
         data = request.get_json(silent=True) or {}
-        token, username, error = handle_signup(data, get_db)
-        
+
+        result, error = handle_signup(data, get_db)
+
         if error:
-            logger.warning(f"[SIGNUP] Failed: {error}")
-            return jsonify({"error": error}), 400 if "already exists" not in error else 409
-        
-        logger.info(f"[SIGNUP] ✓ {username}")
-        return jsonify({"token": token, "username": username})
-    
+            return jsonify({"error": error}), 400
+
+        return jsonify(result)
+
     except Exception as e:
-        logger.error(f"[SIGNUP] Exception: {e}", exc_info=True)
-        return jsonify({"error": "Internal server error"}), 500
+        logger.error(e, exc_info=True)
+
+        return jsonify({
+            "error": "Internal server error"
+        }), 500
+
+@app.route("/api/auth/verify-email", methods=["POST"])
+def verify_email():
+
+    try:
+        data = request.get_json(silent=True) or {}
+
+        result, error = handle_verify_email(data, get_db)
+
+        if error:
+            return jsonify({"error": error}), 400
+
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(e, exc_info=True)
+
+        return jsonify({
+            "error": "Internal server error"
+        }), 500
+    
+@app.route("/api/auth/set-password", methods=["POST"])
+def set_password():
+
+    try:
+        data = request.get_json(silent=True) or {}
+
+        result, error = handle_set_password(data, get_db)
+
+        if error:
+            return jsonify({"error": error}), 400
+
+        return jsonify(result)
+
+    except Exception as e:
+        logger.error(e, exc_info=True)
+
+        return jsonify({
+            "error": "Internal server error"
+        }), 500
 
 # ============ SONGS ============
 

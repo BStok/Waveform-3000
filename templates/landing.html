@@ -927,17 +927,30 @@ body::after{
     <div class="subtitle" id="authModeTitle">▼ SIGN IN OR CREATE ACCOUNT ▼</div>
     
     <div class="auth-input-group">
-      <input id="username" type="text" placeholder="USERNAME" autofocus>
+      <input id="email" type="email" placeholder="EMAIL" autofocus>
     </div>
     
+  <div class="auth-input-group" id="passwordGroup" >
+    <input id="password" type="password" placeholder="SET PASSWORD">
+    </div>
+
     <div class="auth-input-group">
-      <input id="password" type="password" placeholder="PASSWORD">
+        <input id="otp" type="text" placeholder="OTP CODE" style="display:none;">
     </div>
     
     <div class="auth-button-group">
-      <button class="auth-btn" onclick="handleSignup()">NEW ACCOUNT</button>
+      <button class="auth-btn" onclick="signupFlow()">SIGN UP</button>
       <button class="auth-btn" onclick="handleLogin()">LOGIN</button>
     </div>
+
+    <button
+        class="auth-btn"
+        id="verifyBtn"
+        onclick="handleVerifyOTP()"
+        style="width:100%; margin-top:10px; display:none;"
+        >
+    VERIFY OTP
+    </button>
     
     <div id="authError"></div>
     <div class="auth-status" id="authStatus"></div>
@@ -1225,19 +1238,27 @@ SIGNAL IS ETERNAL. MUSIC IS THE UNIVERSE. WAVEFORM-3000 PRO IS YOUR PORTAL TO IN
 
 <script>
 const API = "http://localhost:5000/api";
+let authMode = "login"; // login | signup | verify
 
 // Modal control functions
 function openAuthModal() {
   document.getElementById('authModal').classList.add('show');
-  document.getElementById('username').focus();
+  document.getElementById('email').focus();
 }
 
 function closeAuthModal() {
   document.getElementById('authModal').classList.remove('show');
   document.getElementById('authError').style.display = 'none';
   document.getElementById('authStatus').textContent = '';
-  document.getElementById('username').value = '';
+
+  document.getElementById('email').value = '';
   document.getElementById('password').value = '';
+  document.getElementById('otp').value = '';
+
+  document.getElementById('otp').style.display = 'none';
+  document.getElementById('verifyBtn').style.display = 'none';
+
+  authMode = "login";
 }
 
 // Close modal when clicking outside
@@ -1247,92 +1268,194 @@ document.getElementById('authModal').addEventListener('click', (e) => {
   }
 });
 
-function handleLogin() {
-  const username = document.getElementById('username').value.trim();
+//new handle login
+async function handleLogin() {
+
+  const email = document.getElementById('email').value.trim();
+
   const password = document.getElementById('password').value.trim();
+
   const error = document.getElementById('authError');
+
   const status = document.getElementById('authStatus');
 
   error.style.display = 'none';
-  status.textContent = 'CONNECTING...';
 
-  if (!username || !password) {
-    error.textContent = 'ENTER USERNAME & PASSWORD';
-    error.style.display = 'block';
-    status.textContent = '';
-    return;
-  }
+  try {
 
-  fetch(`${API}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
-  })
-    .then(async (res) => {
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Login failed');
-      return data;
-    })
-    .then((data) => {
-      localStorage.setItem('waveform_token', data.token);
-      localStorage.setItem('waveform_user', data.username);
-      
-      status.textContent = '✓ LOGGED IN - LOADING...';
-      
-      setTimeout(() => {
-        window.location.href = '/app';
-      }, 800);
-    })
-    .catch((e) => {
-      error.textContent = e.message || 'LOGIN FAILED';
-      error.style.display = 'block';
-      status.textContent = '';
+    status.textContent = 'CONNECTING...';
+
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
     });
-}
 
-function handleSignup() {
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value.trim();
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Login failed');
+    }
+
+    localStorage.setItem('waveform_token', data.token);
+
+    localStorage.setItem('waveform_user', data.email);
+
+    status.textContent = 'LOGIN SUCCESS';
+
+    setTimeout(() => {
+      window.location.href = '/app';
+    }, 1000);
+
+  } catch (e) {
+
+    error.textContent = e.message;
+
+    error.style.display = 'block';
+
+    status.textContent = '';
+  }
+}
+async function handleVerifyOTP() {
+
+  const email = document.getElementById('email').value.trim();
+
+  const otp = document.getElementById('otp').value.trim();
+
   const error = document.getElementById('authError');
+
   const status = document.getElementById('authStatus');
 
   error.style.display = 'none';
-  status.textContent = 'CONNECTING...';
 
-  if (!username || !password) {
-    error.textContent = 'ENTER USERNAME & PASSWORD';
-    error.style.display = 'block';
-    status.textContent = '';
-    return;
-  }
+  try {
 
-  fetch(`${API}/auth/signup`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
-  })
-    .then(async (res) => {
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Signup failed');
-      return data;
-    })
-    .then((data) => {
-      localStorage.setItem('waveform_token', data.token);
-      localStorage.setItem('waveform_user', data.username);
-      
-      status.textContent = '✓ ACCOUNT CREATED - LOADING...';
-      
-      setTimeout(() => {
-        window.location.href = '/app';
-      }, 800);
-    })
-    .catch((e) => {
-      error.textContent = e.message || 'SIGNUP FAILED';
-      error.style.display = 'block';
-      status.textContent = '';
+    status.textContent = 'VERIFYING OTP...';
+
+    const res = await fetch(`${API}/auth/verify-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({email, otp })
     });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'OTP verification failed');
+    }
+    localStorage.setItem('waveform_token', data.token);
+
+    localStorage.setItem('waveform_user', data.email);
+
+    status.textContent = 'ACCOUNT VERIFIED';
+
+    setTimeout(() => {
+    window.location.href = '/app';
+    }, 1000);
+  } catch (e) {
+
+    error.textContent = e.message;
+
+    error.style.display = 'block';
+
+    status.textContent = '';
+  }
+}
+//new handle sign up
+function signupFlow() {
+  handleSignup();
 }
 
+async function handleSignup() {
+
+  const email = document.getElementById('email').value.trim();
+
+  const password = document.getElementById('password').value.trim();
+
+  const error = document.getElementById('authError');
+
+  const status = document.getElementById('authStatus');
+
+  error.style.display = 'none';
+
+  try {
+
+    status.textContent = 'SENDING OTP...';
+
+    const res = await fetch(`${API}/auth/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Signup failed');
+    }
+
+    status.textContent = 'OTP SENT';
+
+    document.getElementById('otp').style.display = 'block';
+
+    document.getElementById('verifyBtn').style.display = 'block';
+
+  } catch (e) {
+
+    error.textContent = e.message;
+
+    error.style.display = 'block';
+
+    status.textContent = '';
+  }
+}
+// async function completeSignup() {
+//   const email = document.getElementById('email').value.trim();
+//   const password = document.getElementById('password').value.trim();
+
+//   const error = document.getElementById('authError');
+//   const status = document.getElementById('authStatus');
+
+//   try {
+//     status.textContent = 'CREATING ACCOUNT...';
+
+//     const res = await fetch(`${API}/auth/set-password`, {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ email, password })
+//     });
+
+//     const data = await res.json();
+//     if (!res.ok) throw new Error(data.error || 'Failed');
+
+//     localStorage.setItem('waveform_token', data.token);
+//     localStorage.setItem('waveform_user', data.email);
+
+//     status.textContent = 'ACCOUNT READY';
+
+//     setTimeout(() => {
+//       closeAuthModal();
+//       window.location.href = '/app';
+//     }, 800);
+
+//   } catch (e) {
+//     error.textContent = e.message;
+//     error.style.display = 'block';
+//     status.textContent = '';
+//   }
+// }
 // Allow Enter key
 document.addEventListener('keydown', (e) => {
   const modal = document.getElementById('authModal');
@@ -1341,7 +1464,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     if (document.getElementById('password') === document.activeElement) {
       handleLogin();
-    } else if (document.getElementById('username') === document.activeElement) {
+    } else if (document.getElementById('email') === document.activeElement) {
       document.getElementById('password').focus();
     }
   }
@@ -1363,7 +1486,7 @@ window.addEventListener('DOMContentLoaded', () => {
 const images = [
     "https://i.pinimg.com/736x/1a/45/da/1a45da10ae8d3a9e8950c53de1fc0ca7.jpg",
     "https://i.pinimg.com/736x/26/9a/96/269a9609a28393a4f12769ed68d1def8.jpg",
-    "ahttps://i.pinimg.com/1200x/e9/64/5c/e9645c4c3f9ebd96ccc2b14610dedd67.jpg",
+    "https://i.pinimg.com/1200x/e9/64/5c/e9645c4c3f9ebd96ccc2b14610dedd67.jpg",
     "https://i.pinimg.com/736x/c4/bf/6a/c4bf6a3c332e3b30fff52f2878408a57.jpg",
     "https://i.pinimg.com/736x/46/33/e3/4633e35b69242f79456d022457c6615d.jpg",
     "https://i.pinimg.com/1200x/c9/17/a1/c917a10bc3b352052fc2528da699faf0.jpg",
