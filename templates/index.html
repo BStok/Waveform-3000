@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WAVEFORM-3000 PRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --amber:#FFB000;--amber-dim:#7A5200;--amber-glow:#FF8C00;
+  --green:#00FF41;--green-dim:#004D13;
+  --cyan:#00D4FF;--cyan-dim:#004D7A;
+  --red:#FF3131;--pink:#FF1493;
+  --bg:#0A0800;--crt:#0D0A00;--panel:#110E00;--border:#3D2E00;
+}
+html,body{height:100%;overflow-x:hidden;background:var(--bg);color:var(--amber)}
+body{font-family:'VT323',monospace;font-size:16px;line-height:1.4}
+
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.12) 0px,rgba(0,0,0,0.12) 1px,transparent 1px,transparent 3px);animation:flicker 9s infinite}
+@keyframes flicker{0%,94%,100%{opacity:1}95%{opacity:.97}97%{opacity:.94}99%{opacity:.98}}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.4) 100%)}
+
+.page{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:20px}
+
+/* LOGOUT BUTTON IN HEADER */
+.logout-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 500;
+  background: var(--red);
+  border: 2px solid var(--red);
+  padding: 8px 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 49, 49, 0.4);
+  transition: all 0.1s;
+}
+
+.logout-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.user-info {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 500;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--cyan);
+  text-shadow: 0 0 4px var(--cyan);
+}
+
+/* HEADER */
+header{padding:20px 0;text-align:center;margin-bottom:20px}
+.spool-row{display:inline-flex;align-items:center;gap:12px;margin-bottom:10px}
+.spool{width:24px;height:24px;border:2px solid var(--amber);border-radius:50%;animation:spin 8s linear infinite;position:relative;box-shadow:0 0 10px rgba(255,176,0,0.4)}
+.spool::after{content:'';position:absolute;inset:4px;border:2px solid var(--amber);border-radius:50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spool.fast{animation-duration:0.8s}
+.h1{font-family:'Press Start 2P',monospace;font-size:clamp(16px,5vw,28px);color:var(--amber);letter-spacing:2px;line-height:1.3;text-shadow:0 0 4px var(--amber),0 0 12px rgba(255,176,0,0.2);margin-bottom:6px}
+.h1 em{color:var(--cyan);font-style:normal}
+.model{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);letter-spacing:3px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin:20px 0;flex-wrap:wrap;border-bottom:2px solid var(--border)}
+.tab{padding:10px 16px;background:var(--panel);border:2px solid var(--amber-dim);border-bottom:none;font-family:'Press Start 2P',monospace;font-size:12px;color:var(--amber-dim);cursor:pointer;transition:all .1s;text-transform:uppercase;letter-spacing:1px}
+.tab:hover{background:rgba(255,176,0,.08);border-color:var(--amber)}
+.tab.active{background:var(--crt);border-color:var(--amber);color:var(--amber);text-shadow:0 0 8px var(--amber);position:relative;bottom:-2px}
+
+/* CONTAINER */
+.container{display:none;padding:20px 0}
+.container.show{display:block}
+
+/* GRID LAYOUT */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+
+/* PANEL */
+.panel{background:var(--panel);border:2px solid var(--amber-dim);border-top-color:var(--amber);border-left-color:var(--amber);padding:16px;box-shadow:0 0 16px rgba(255,176,0,.08);position:relative}
+.panel-title{position:absolute;top:-10px;left:16px;background:var(--bg);padding:0 8px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);letter-spacing:2px;text-transform:uppercase}
+
+/* RIP TAB */
+.search-box{display:flex;gap:4px;margin-bottom:16px}
+.search-box input{flex:1;background:var(--crt);border:2px solid var(--amber-dim);padding:10px;font-family:'VT323',monospace;font-size:16px;color:var(--amber);caret-color:var(--green)}
+.search-box input::placeholder{color:var(--amber-dim)}
+.add-input{display:flex;gap:4px;margin-bottom:16px}
+.add-input input{flex:1;background:var(--crt);border:2px solid var(--amber-dim);padding:10px;font-family:'VT323',monospace;font-size:16px;color:var(--amber)}
+.add-input button{background:var(--green);border:none;padding:10px 14px;font-family:'Press Start 2P',monospace;font-size:8px;color:var(--bg);cursor:pointer;box-shadow:inset -2px -2px 0 var(--green-dim);transition:opacity .1s}
+
+.song-list{max-height:500px;overflow-y:auto;border:2px solid var(--border)}
+.song-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(61,46,0,.4);cursor:pointer;transition:all .1s;position:relative;user-select:none}
+.song-item:hover{background:rgba(255,176,0,.04)}
+.song-item.playing::before{content:'▶';position:absolute;left:4px;color:var(--green);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+.song-check{width:16px;height:16px;border:2px solid var(--amber-dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .1s;cursor:pointer}
+.song-item input[type="checkbox"]:checked~.song-check{border-color:var(--green);color:var(--green);background:rgba(0,255,65,.1);box-shadow:0 0 8px rgba(0,255,65,.4)}
+.song-num{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);min-width:20px}
+.song-title{flex:1;font-size:15px;color:var(--amber);font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.song-artist{font-size:12px;color:var(--amber-dim)}
+
+.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+.info-box{background:var(--crt);border:2px solid var(--border);padding:12px;text-align:center}
+.info-label{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);display:block;margin-bottom:6px;text-transform:uppercase}
+.info-value{font-family:'Press Start 2P',monospace;font-size:16px;color:var(--green);text-shadow:0 0 3px var(--green)}
+
+.btn-primary{width:100%;background:var(--amber);border:none;padding:14px;font-family:'Press Start 2P',monospace;font-size:10px;color:var(--bg);cursor:pointer;box-shadow:inset -2px -2px 0 var(--amber-dim);margin-top:16px;transition:all .1s;text-transform:uppercase;letter-spacing:2px}
+.btn-primary:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed}
+
+/* PROGRESS BOX */
+.progress-box{display:none;background:var(--panel);border:2px solid var(--green);box-shadow:0 0 20px rgba(0,255,65,.2);padding:20px;margin:20px 0;position:relative}
+.progress-box.on{display:block;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.progress-box::before{content:'◄ DOWNLOADING ►';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 10px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--green);letter-spacing:2px;white-space:nowrap;text-shadow:0 0 8px var(--green)}
+
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.progress-title{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber-dim);text-transform:uppercase}
+.progress-count{font-family:'Press Start 2P',monospace;font-size:14px;color:var(--green);text-shadow:0 0 2px var(--green)}
+.progress-current{font-family:'VT323',monospace;font-size:14px;color:var(--cyan);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:8px 0}
+
+.progress-bar{height:16px;background:var(--crt);border:2px solid var(--amber-dim);margin-bottom:12px;overflow:hidden}
+.progress-fill{height:100%;width:0%;transition:width .3s;background:repeating-linear-gradient(90deg,var(--green) 0,var(--green) 8px,rgba(0,255,65,.35) 8px,rgba(0,255,65,.35) 10px);box-shadow:0 0 10px var(--green)}
+
+/* PLAYER */
+.player{background:var(--panel);border:2px solid var(--cyan);box-shadow:0 0 20px rgba(0,212,255,.2);padding:20px;margin:20px 0;position:relative}
+.player::before{content:'◄ NOW PLAYING ►';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 10px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--cyan);letter-spacing:2px;white-space:nowrap;text-shadow:0 0 8px var(--cyan)}
+
+.player-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.player-song{font-size:14px;color:var(--green);font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px;background:var(--crt);border:1px solid var(--border);text-shadow:0 0 2px var(--green)}
+.player-time{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber-dim);padding:8px;background:var(--crt);border:1px solid var(--border);text-align:center}
+
+.timeline{margin:16px 0}
+.timeline-bar{width:100%;height:20px;background:var(--crt);border:2px solid var(--amber-dim);cursor:pointer;position:relative;overflow:hidden}
+.timeline-fill{height:100%;width:0%;background:var(--cyan);box-shadow:0 0 8px rgba(0,212,255,.5)}
+.timeline-thumb{position:absolute;top:50%;left:0%;transform:translate(-50%,-50%);width:16px;height:16px;background:var(--green);border:2px solid var(--amber);border-radius:50%;cursor:grab;box-shadow:0 0 8px rgba(0,255,65,.6)}
+.timeline-thumb:active{cursor:grabbing}
+
+.timeline-labels{display:flex;justify-content:space-between;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);margin-top:6px}
+
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.btn-ctrl{flex:1;min-width:100px;background:var(--green);border:none;padding:12px;font-family:'Press Start 2P',monospace;font-size:9px;color:var(--bg);cursor:pointer;box-shadow:inset -2px -2px 0 var(--green-dim);transition:all .1s;text-transform:uppercase;letter-spacing:1px}
+.btn-ctrl:hover{opacity:.85;transform:translateY(-1px)}
+.btn-ctrl.danger{background:var(--red)}
+.btn-ctrl.cyan{background:var(--cyan)}
+
+.speed-control{display:flex;align-items:center;gap:12px;padding:12px;background:var(--crt);border:2px solid var(--border);margin-bottom:16px}
+.speed-label{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber);text-transform:uppercase}
+.speed-slider{flex:1;height:6px;background:var(--panel);border:1px solid var(--amber-dim);cursor:pointer;-webkit-appearance:none;appearance:none}
+.speed-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:14px;height:14px;background:var(--green);border:2px solid var(--amber);cursor:pointer;box-shadow:0 0 8px rgba(0,255,65,.4)}
+.speed-slider::-moz-range-thumb{width:14px;height:14px;background:var(--green);border:2px solid var(--amber);cursor:pointer;box-shadow:0 0 8px rgba(0,255,65,.4)}
+.speed-value{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--green);text-shadow:0 0 2px var(--green);min-width:40px;text-align:center}
+
+audio{display:none}
+
+/* PLAYLIST */
+.pl-list{max-height:400px;overflow-y:auto;border:2px solid var(--border);margin-bottom:16px}
+.pl-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid rgba(61,46,0,.4);cursor:pointer;transition:all .1s;background:rgba(255,176,0,.02)}
+.pl-item:hover{background:rgba(255,176,0,.06)}
+.pl-item.active{background:rgba(0,212,255,.08);border-left:3px solid var(--cyan)}
+.pl-name{font-size:15px;color:var(--amber);font-weight:bold;flex:1}
+.pl-count{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);margin:0 8px}
+.pl-actions{display:flex;gap:4px}
+.pl-btn{background:none;border:1px solid var(--amber-dim);padding:4px 8px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--amber-dim);cursor:pointer;transition:all .1s}
+.pl-btn:hover{border-color:var(--red);color:var(--red);box-shadow:0 0 8px rgba(255,49,49,.2)}
+
+.pl-create{display:flex;gap:4px;margin-bottom:16px}
+.pl-create input{flex:1;background:var(--crt);border:2px solid var(--amber-dim);padding:10px;font-family:'VT323',monospace;font-size:16px;color:var(--amber)}
+.pl-create button{background:var(--green);border:none;padding:10px 14px;font-family:'Press Start 2P',monospace;font-size:8px;color:var(--bg);cursor:pointer;box-shadow:inset -2px -2px 0 var(--green-dim);transition:opacity .1s}
+
+.pl-editor{display:none}
+.pl-editor.show{display:block}
+.pl-header{display:flex;align-items:center;justify-content:space-between;padding:16px;background:rgba(0,212,255,.05);border-bottom:2px solid var(--border);margin-bottom:16px}
+.pl-header h2{font-family:'Press Start 2P',monospace;font-size:11px;color:var(--cyan);text-shadow:0 0 3px var(--cyan)}
+.pl-back{background:none;border:1px solid var(--cyan);padding:6px 10px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--cyan);cursor:pointer;transition:all .1s}
+.pl-back:hover{background:rgba(0,212,255,.1);box-shadow:0 0 8px var(--cyan)}
+
+.pl-songs{max-height:400px;overflow-y:auto;border:2px solid var(--border);margin-bottom:16px}
+.pl-song{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(61,46,0,.4);transition:all .1s;cursor:grab;background:rgba(0,212,255,.02)}
+.pl-song:active{cursor:grabbing;background:rgba(255,176,0,.08)}
+.pl-drag-handle{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber-dim);cursor:grab}
+.pl-song-info{flex:1;overflow:hidden;min-width:0}
+.pl-song-title{font-size:14px;color:var(--amber);font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-song-artist{font-size:12px;color:var(--amber-dim)}
+.pl-song-duration{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);min-width:40px;text-align:right}
+.pl-play-btn{background:var(--green);border:none;padding:6px 10px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--bg);cursor:pointer;transition:all .1s}
+.pl-play-btn:hover{opacity:.85}
+.pl-rm{background:none;border:1px solid var(--red);padding:4px 8px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--red);cursor:pointer;transition:all .1s}
+
+/* QUEUE */
+.queue-list{max-height:400px;overflow-y:auto;border:2px solid var(--border)}
+.queue-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid rgba(61,46,0,.4);background:rgba(0,212,255,.02);transition:all .1s}
+.queue-item.playing{background:rgba(0,255,65,.08)}
+.q-num{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--cyan);min-width:20px}
+.q-song-title{flex:1;font-size:14px;color:var(--amber);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q-song-artist{font-size:11px;color:var(--amber-dim)}
+.q-duration{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);min-width:40px}
+.q-rm{background:none;border:1px solid var(--red);padding:3px 6px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--red);cursor:pointer;transition:all .1s}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--panel)}
+::-webkit-scrollbar-thumb{background:var(--amber-dim)}
+::-webkit-scrollbar-thumb:hover{background:var(--amber)}
+
+.gline{height:2px;background:var(--amber);margin:16px 0;position:relative;overflow:hidden;box-shadow:0 0 3px var(--amber)}
+.gline::after{content:'';position:absolute;top:0;left:-40%;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,212,255,.4),transparent);animation:sweep 3.5s linear infinite}
+@keyframes sweep{from{left:-40%}to{left:130%}}
+</style>
+</head>
+<body>
+
+<div class="user-info" id="userInfo">SYSTEM READY</div>
+<button class="logout-btn" onclick="handleLogout()">LOGOUT</button>
+
+<audio id="audioPlayer"></audio>
+
+<div class="page">
+
+<header>
+  <div class="spool-row">
+    <div class="spool" id="sl"></div>
+    <span class="h1">WAVE<em>FORM</em></span>
+    <div class="spool" id="sr"></div>
+  </div>
+  <div class="model">MODEL 3000 PRO · AUDIO LIBRARY</div>
+</header>
+
+<div class="gline"></div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('rip')">RIP</div>
+  <div class="tab" onclick="showTab('library')">LIBRARY</div>
+  <div class="tab" onclick="showTab('playlists')">PLAYLISTS</div>
+  <div class="tab" onclick="showTab('player')">▶ PLAYER</div>
+</div>
+
+<!-- RIP TAB -->
+<div class="container show" id="rip">
+  <div class="gline"></div>
+  <div class="panel" style="padding:20px">
+    <div style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--amber);margin-bottom:16px;text-transform:uppercase;letter-spacing:2px">🎬 Add to Library</div>
+    
+    <div class="info-grid">
+      <div class="info-box">
+        <span class="info-label">SUGGESTED</span>
+        <span class="info-value" id="sugCount">00</span>
+      </div>
+      <div class="info-box">
+        <span class="info-label">CUSTOM</span>
+        <span class="info-value" id="customCount">00</span>
+      </div>
+      <div class="info-box">
+        <span class="info-label">SELECTED</span>
+        <span class="info-value" id="selCount">00</span>
+      </div>
+    </div>
+
+    <div class="add-input">
+      <input id="customSong" type="text" placeholder="SONG NAME + ARTIST..."/>
+      <button onclick="addCustomSong()">+ ADD</button>
+    </div>
+
+    <div class="search-box">
+      <input id="ripSearch" type="text" placeholder="SEARCH..."/>
+      <button onclick="toggleRipAll()" style="background:var(--amber);border:none;padding:10px 14px;font-family:'Press Start 2P',monospace;font-size:8px;color:var(--bg);cursor:pointer">ALL</button>
+    </div>
+
+    <div class="song-list" id="ripList"></div>
+
+    <button class="btn-primary" onclick="startDownload()">▼ RIP &amp; DOWNLOAD ▼</button>
+  </div>
+
+  <div class="progress-box" id="progressBox">
+    <div class="progress-top">
+      <span class="progress-title">BUFFERING...</span>
+      <span class="progress-count" id="progressCount">00/00</span>
+    </div>
+    <div class="progress-current" id="progressCurrent">Starting...</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<!-- LIBRARY TAB -->
+<div class="container" id="library">
+  <div class="gline"></div>
+  <div class="panel" style="padding:20px">
+    <div style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--green);margin-bottom:16px;text-shadow:0 0 8px var(--green);text-transform:uppercase">🎵 Your Library</div>
+    
+    <div class="info-box" style="margin-bottom:16px">
+      <span class="info-label">TOTAL SONGS</span>
+      <span class="info-value" id="libCount">00</span>
+    </div>
+
+    <div class="search-box">
+      <input id="libSearch" type="text" placeholder="SEARCH LIBRARY..."/>
+    </div>
+    <div class="song-list" id="libList"></div>
+  </div>
+</div>
+
+<!-- PLAYLISTS TAB -->
+<div class="container" id="playlists">
+  <div class="gline"></div>
+  <div class="grid-2">
+    <div class="panel" style="padding:20px">
+      <div class="panel-title">PLAYLISTS</div>
+      <div style="margin-top:12px">
+        <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--cyan);margin-bottom:12px;text-transform:uppercase">► Create New</div>
+        <div class="pl-create">
+          <input id="newPlName" type="text" placeholder="NAME..."/>
+          <button onclick="createPlaylist()">+</button>
+        </div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--amber-dim);margin:16px 0 8px">► Your Playlists</div>
+        <div class="pl-list" id="plList"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="padding:20px">
+      <div class="pl-editor" id="plEditor">
+        <div class="pl-header">
+          <h2 id="plEditorTitle">SELECT PLAYLIST</h2>
+          <button class="pl-back" onclick="closePlEditor()">BACK</button>
+        </div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber-dim);margin-bottom:8px">CLICK PLAY TO PLAY FROM HERE · DRAG TO REORDER</div>
+        <div class="pl-songs" id="plSongs"></div>
+        <div style="margin-top:16px;padding:12px;background:var(--crt);border:2px solid var(--border)">
+          <div style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);margin-bottom:8px">ADD SONGS FROM LIBRARY</div>
+          <div class="search-box">
+            <input id="plSearch" type="text" placeholder="FIND SONG..."/>
+          </div>
+          <div class="song-list" style="margin-top:8px;max-height:200px" id="plAvailable"></div>
+        </div>
+      </div>
+      <div style="padding:20px;text-align:center;color:var(--amber-dim)" id="noPlSelected">
+        <div style="font-family:'Press Start 2P',monospace;font-size:10px;line-height:2">SELECT A<br/>PLAYLIST TO<br/>EDIT</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER TAB -->
+<div class="container" id="player">
+  <div class="gline"></div>
+  <div class="panel" style="padding:20px">
+    <div class="player">
+      <div class="player-info">
+        <div>
+          <div style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);margin-bottom:4px">NOW PLAYING</div>
+          <div class="player-song" id="playerSongTitle">— IDLE —</div>
+        </div>
+        <div>
+          <div style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--amber-dim);margin-bottom:4px">TIME</div>
+          <div class="player-time"><span id="playerTime">00:00</span> / <span id="playerDuration">00:00</span></div>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-bar" id="timelineBar">
+          <div class="timeline-fill" id="timelineFill"></div>
+          <div class="timeline-thumb" id="timelineThumb"></div>
+        </div>
+        <div class="timeline-labels">
+          <span id="startTime">0:00</span>
+          <span id="endTime">0:00</span>
+        </div>
+      </div>
+
+      <div class="speed-control">
+        <span class="speed-label">SPEED</span>
+        <input type="range" class="speed-slider" id="speedSlider" min="0.5" max="2" step="0.1" value="1"/>
+        <span class="speed-value" id="speedVal">1.0x</span>
+      </div>
+
+      <div class="controls">
+        <button class="btn-ctrl" onclick="playPause()" id="playBtn">▶ PLAY</button>
+        <button class="btn-ctrl" onclick="prevTrack()">⏮ PREV</button>
+        <button class="btn-ctrl" onclick="nextTrack()">⏭ NEXT</button>
+        <button class="btn-ctrl cyan" onclick="shuffleQueue()">🔀 SHUFFLE</button>
+        <button class="btn-ctrl cyan" onclick="toggleRepeat()" id="repeatBtn">🔁 REPEAT</button>
+        <button class="btn-ctrl danger" onclick="stopPlayback()">⏹ STOP</button>
+      </div>
+
+      <div style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--amber-dim);margin:16px 0 8px;text-transform:uppercase">QUEUE</div>
+      <div class="queue-list" id="qList"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const API = 'http://localhost:5000/api';
+
+let state = {
+  user: null,
+  token: null,
+  library: {},
+  playlists: {},
+  ripSongs: [],
+  ripSelected: new Set(),
+  customSongs: [],
+  queue: [],
+  queueIndex: -1,
+  isPlaying: false,
+  speed: 1,
+  repeat: false,
+  shuffle: false,
+  currentPlaylistId: null,
+  downloadJobId: null,
+  downloadPollInterval: null,
+  currentSongId: null
+};
+
+const p2 = n => String(n).padStart(2, '0');
+const formatTime = s => {
+  const m = Math.floor(s / 60);
+  return `${m}:${p2(s % 60)}`;
+};
+
+// ============ AUTHENTICATION ============
+
+function getAuthToken() {
+  return localStorage.getItem('waveform_token');
+}
+
+function getUsername() {
+  return localStorage.getItem('waveform_user');
+}
+
+function handleLogout() {
+  localStorage.removeItem('waveform_token');
+  localStorage.removeItem('waveform_user');
+  window.location.href = '/';
+}
+
+// ============ FETCH WITH AUTH HEADERS ============
+
+async function apiCall(endpoint, options = {}) {
+  const token = getAuthToken();
+  
+  if (!token) {
+    window.location.href = '/';
+    return;
+  }
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
+    ...options.headers
+  };
+  
+  const response = await fetch(`${API}${endpoint}`, {
+    ...options,
+    headers
+  });
+  
+  if (response.status === 401) {
+    // Token expired or invalid
+    localStorage.removeItem('waveform_token');
+    localStorage.removeItem('waveform_user');
+    window.location.href = '/';
+    return;
+  }
+  
+  return response;
+}
+
+// ============ DATA LOAD ============
+
+async function loadAllData() {
+  try {
+    const [rip, lib, pls] = await Promise.all([
+      apiCall('/songs').then(r => r.json()),
+      apiCall('/library').then(r => r.json()),
+      apiCall('/playlists').then(r => r.json())
+    ]);
+    
+    state.ripSongs = rip.songs || [];
+    state.library = lib || {};
+    state.playlists = pls || {};
+    renderAll();
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// ============ UI TABS ============
+
+function showTab(tab) {
+  document.querySelectorAll('.container').forEach(c => c.classList.remove('show'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tab).classList.add('show');
+  event.target.classList.add('active');
+}
+
+// ============ RENDER FUNCTIONS ============
+// (Copy all render functions from original index.html - they're identical)
+
+function renderRip() {
+  const search = document.getElementById('ripSearch').value.toLowerCase();
+  const all = [...state.ripSongs, ...state.customSongs];
+  const filtered = all.filter(s => s.toLowerCase().includes(search));
+  
+  document.getElementById('ripList').innerHTML = filtered.map((s, i) => {
+    const idx = all.indexOf(s);
+    const checked = state.ripSelected.has(idx);
+    return `<div class="song-item" style="background:${checked ? 'rgba(0,255,65,.08)' : ''}">
+      <input type="checkbox" ${checked ? 'checked' : ''} onchange="(this.checked?state.ripSelected.add(${idx}):state.ripSelected.delete(${idx})),updateCounts(),renderRip()" style="width:16px;height:16px;cursor:pointer"/>
+      <span class="song-num">${p2(i + 1)}</span>
+      <span class="song-title">${s.toUpperCase()}</span>
+    </div>`;
+  }).join('');
+  updateCounts();
+}
+
+function renderLibrary() {
+  const search = document.getElementById('libSearch').value.toLowerCase();
+  const songs = Object.values(state.library).filter(s =>
+    s.title.toLowerCase().includes(search) || s.artist.toLowerCase().includes(search)
+  );
+  document.getElementById('libCount').textContent = p2(Object.keys(state.library).length);
+  
+  document.getElementById('libList').innerHTML = songs.map((s, i) => `<div class="song-item">
+    <span class="song-num">${p2(i + 1)}</span>
+    <div style="flex:1">
+      <div class="song-title">${s.title.toUpperCase()}</div>
+      <div class="song-artist">${s.artist} · ${formatTime(s.duration_seconds || 0)}</div>
+    </div>
+    <div style="display:flex;gap:4px">
+      <button style="background:var(--green);border:none;padding:4px 8px;font-family:'Press Start 2P',monospace;font-size:7px;color:var(--bg);cursor:pointer" onclick="playFromLibrary('${s.id}')">▶</button>
+      <button style="background:none;border:1px solid var(--red);padding:3px 6px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--red);cursor:pointer" onclick="deleteSong('${s.id}')">✕</button>
+    </div>
+  </div>`).join('');
+}
+
+function renderPlaylists() {
+  const pls = state.playlists;
+  document.getElementById('plList').innerHTML = Object.values(pls).map(p => `<div class="pl-item${state.currentPlaylistId === p.id ? ' active' : ''}" onclick="editPlaylist('${p.id}')">
+    <span class="pl-name">${p.name.toUpperCase()}</span>
+    <span class="pl-count">${p.songs.length}</span>
+    <div class="pl-actions" onclick="event.stopPropagation()">
+      <button class="pl-btn" onclick="deletePlaylist('${p.id}')" style="border-color:var(--red);color:var(--red)">DEL</button>
+    </div>
+  </div>`).join('');
+  
+  if (state.currentPlaylistId && pls[state.currentPlaylistId]) {
+    const pl = pls[state.currentPlaylistId];
+    document.getElementById('plEditor').classList.add('show');
+    document.getElementById('noPlSelected').style.display = 'none';
+    document.getElementById('plEditorTitle').textContent = pl.name.toUpperCase();
+    renderPlaylistSongs(pl);
+    renderAvailable();
+  } else {
+    document.getElementById('plEditor').classList.remove('show');
+    document.getElementById('noPlSelected').style.display = 'block';
+  }
+}
+
+function renderPlaylistSongs(pl) {
+  const songs = pl.songs.map(sid => state.library[sid]).filter(Boolean);
+  document.getElementById('plSongs').innerHTML = songs.map((s, idx) => `<div class="pl-song" draggable="true" ondragstart="dragStart(event,${idx})" ondrop="dragDrop(event)" ondragover="dragOver(event)">
+    <span class="pl-drag-handle">⋮</span>
+    <div class="pl-song-info">
+      <div class="pl-song-title">${s.title.toUpperCase()}</div>
+      <div class="pl-song-artist">${s.artist}</div>
+    </div>
+    <span class="pl-song-duration">${formatTime(s.duration_seconds || 0)}</span>
+    <button class="pl-play-btn" onclick="playPlaylist('${state.currentPlaylistId}','${s.id}')">▶</button>
+    <button class="pl-rm" onclick="removeSongFromPlaylist('${state.currentPlaylistId}','${s.id}')">✕</button>
+  </div>`).join('');
+}
+
+function renderAvailable() {
+  const pl = state.playlists[state.currentPlaylistId];
+  if (!pl) return;
+  const search = document.getElementById('plSearch').value.toLowerCase();
+  const available = Object.values(state.library).filter(s =>
+    !pl.songs.includes(s.id) && (s.title.toLowerCase().includes(search) || s.artist.toLowerCase().includes(search))
+  );
+  document.getElementById('plAvailable').innerHTML = available.map(s => `<div class="song-item">
+    <span class="song-num" style="color:var(--green)">+</span>
+    <div style="flex:1">
+      <div class="song-title">${s.title.toUpperCase()}</div>
+      <div class="song-artist">${s.artist}</div>
+    </div>
+    <button style="background:var(--green);border:none;padding:4px 6px;font-family:'Press Start 2P',monospace;font-size:6px;color:var(--bg);cursor:pointer" onclick="addSongToPlaylist('${state.currentPlaylistId}','${s.id}')">ADD</button>
+  </div>`).join('');
+}
+
+function renderQueue() {
+  document.getElementById('qList').innerHTML = state.queue.map((s, i) => `<div class="queue-item${state.queueIndex === i ? ' playing' : ''}">
+    <span class="q-num">${p2(i + 1)}</span>
+    <div style="flex:1">
+      <div class="q-song-title">${s.title.toUpperCase()}</div>
+      <div class="q-song-artist">${s.artist}</div>
+    </div>
+    <span class="q-duration">${formatTime(s.duration_seconds || 0)}</span>
+    <button class="q-rm" onclick="removeFromQueue(${i})">✕</button>
+  </div>`).join('');
+}
+
+function renderAll() {
+  renderRip();
+  renderLibrary();
+  renderPlaylists();
+  updateCounts();
+}
+
+function updateCounts() {
+  document.getElementById('sugCount').textContent = p2(state.ripSongs.length);
+  document.getElementById('customCount').textContent = p2(state.customSongs.length);
+  document.getElementById('selCount').textContent = p2(state.ripSelected.size);
+}
+
+// ============ RIP & DOWNLOAD ============
+
+function addCustomSong() {
+  const v = document.getElementById('customSong').value.trim();
+  if (!v) return;
+  state.customSongs.push(v);
+  document.getElementById('customSong').value = '';
+  renderRip();
+}
+
+function toggleRipAll() {
+  const all = [...state.ripSongs, ...state.customSongs];
+  if (state.ripSelected.size === all.length) state.ripSelected.clear();
+  else all.forEach((_, i) => state.ripSelected.add(i));
+  renderRip();
+}
+
+function startDownload() {
+  if (state.ripSelected.size === 0) {
+    alert('SELECT SONGS');
+    return;
+  }
+  const all = [...state.ripSongs, ...state.customSongs];
+  const songs = Array.from(state.ripSelected).map(i => all[i]);
+  
+  apiCall('/download', { method: 'POST', body: JSON.stringify({ songs }) })
+    .then(r => r.json())
+    .then(d => {
+      state.downloadJobId = d.job_id;
+      document.getElementById('progressBox').classList.add('on');
+      pollDownload();
+    })
+    .catch(e => alert('Failed'));
+}
+
+function pollDownload() {
+  clearInterval(state.downloadPollInterval);
+  state.downloadPollInterval = setInterval(async () => {
+    try {
+      const r = await apiCall(`/status/${state.downloadJobId}`);
+      const d = await r.json();
+      const pct = d.total > 0 ? Math.round(d.progress / d.total * 100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressCount').textContent = `${p2(d.progress)}/${p2(d.total)}`;
+      document.getElementById('progressCurrent').textContent = d.current || 'Processing...';
+      if (d.status === 'done') {
+        clearInterval(state.downloadPollInterval);
+        setTimeout(() => {
+          document.getElementById('progressBox').classList.remove('on');
+          alert(`✓ Added ${d.progress} songs`);
+          state.ripSelected.clear();
+          state.customSongs = [];
+          loadAllData();
+        }, 1000);
+      }
+    } catch (e) { }
+  }, 500);
+}
+
+// ============ PLAYBACK ============
+
+const audio = document.getElementById('audioPlayer');
+
+document.getElementById('speedSlider').addEventListener('input', e => {
+  state.speed = parseFloat(e.target.value);
+  audio.playbackRate = state.speed;
+  document.getElementById('speedVal').textContent = state.speed.toFixed(1) + 'x';
+});
+
+audio.addEventListener('timeupdate', () => {
+  const p = audio.duration > 0 ? audio.currentTime / audio.duration : 0;
+  document.getElementById('timelineFill').style.width = (p * 100) + '%';
+  document.getElementById('timelineThumb').style.left = (p * 100) + '%';
+  document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
+});
+
+audio.addEventListener('ended', () => {
+  if (state.repeat) {
+    audio.currentTime = 0;
+    audio.play();
+  } else {
+    nextTrack();
+  }
+});
+
+document.getElementById('timelineBar').addEventListener('click', e => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width;
+  if (audio.duration) audio.currentTime = x * audio.duration;
+});
+
+function playFromLibrary(id) {
+  state.queue = [state.library[id]];
+  state.queueIndex = 0;
+  playTrack();
+}
+
+function playPlaylist(plId, songId) {
+  const pl = state.playlists[plId];
+  const idx = pl.songs.indexOf(songId);
+  state.queue = pl.songs.map(sid => state.library[sid]).filter(Boolean);
+  state.queueIndex = idx;
+  playTrack();
+}
+
+function playTrack() {
+  if (state.queueIndex < 0 || state.queueIndex >= state.queue.length) return;
+  const song = state.queue[state.queueIndex];
+  state.currentSongId = song.id;
+  audio.src = `${API}/audio/${song.id}/stream`;
+  audio.play();
+  state.isPlaying = true;
+  document.getElementById('playBtn').textContent = '⏸ PAUSE';
+  document.getElementById('playerSongTitle').textContent = song.title.toUpperCase();
+  document.getElementById('playerDuration').textContent = formatTime(song.duration_seconds || 0);
+  document.getElementById('endTime').textContent = formatTime(song.duration_seconds || 0);
+  renderQueue();
+}
+
+audio.addEventListener('loadedmetadata', () => {
+  document.getElementById('playerDuration').textContent = formatTime(audio.duration);
+  document.getElementById('endTime').textContent = formatTime(audio.duration);
+});
+
+function playPause() {
+  if (!state.queue.length) {
+    alert('QUEUE IS EMPTY');
+    return;
+  }
+  if (state.queueIndex === -1) state.queueIndex = 0;
+  if (state.isPlaying) {
+    audio.pause();
+    state.isPlaying = false;
+    document.getElementById('playBtn').textContent = '▶ PLAY';
+  } else {
+    if (!audio.src) playTrack();
+    else {
+      audio.play();
+      state.isPlaying = true;
+      document.getElementById('playBtn').textContent = '⏸ PAUSE';
+    }
+  }
+}
+
+function nextTrack() {
+  if (state.queue.length === 0) return;
+  state.queueIndex = (state.queueIndex + 1) % state.queue.length;
+  playTrack();
+}
+
+function prevTrack() {
+  if (state.queue.length === 0) return;
+  state.queueIndex = (state.queueIndex - 1 + state.queue.length) % state.queue.length;
+  playTrack();
+}
+
+function shuffleQueue() {
+  for (let i = state.queue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [state.queue[i], state.queue[j]] = [state.queue[j], state.queue[i]];
+  }
+  state.queueIndex = 0;
+  renderQueue();
+}
+
+function toggleRepeat() {
+  state.repeat = !state.repeat;
+  document.getElementById('repeatBtn').textContent = state.repeat ? '🔂 REPEAT' : '🔁 REPEAT';
+  document.getElementById('repeatBtn').style.boxShadow = state.repeat ? '0 0 12px rgba(0,255,65,.7)' : '';
+}
+
+function stopPlayback() {
+  audio.pause();
+  audio.currentTime = 0;
+  state.isPlaying = false;
+  state.queueIndex = -1;
+  state.queue = [];
+  document.getElementById('playBtn').textContent = '▶ PLAY';
+  document.getElementById('playerSongTitle').textContent = '— IDLE —';
+  renderQueue();
+}
+
+function removeFromQueue(i) {
+  state.queue.splice(i, 1);
+  if (state.queueIndex >= state.queue.length) state.queueIndex = Math.max(-1, state.queue.length - 1);
+  renderQueue();
+}
+
+// ============ PLAYLIST OPS ============
+
+function createPlaylist() {
+  const name = document.getElementById('newPlName').value.trim();
+  if (!name) return;
+  apiCall('/playlists', { method: 'POST', body: JSON.stringify({ name }) })
+    .then(r => r.json())
+    .then(d => {
+      state.playlists[d.id] = d;
+      document.getElementById('newPlName').value = '';
+      renderPlaylists();
+    })
+    .catch(e => alert('Failed'));
+}
+
+function editPlaylist(id) {
+  state.currentPlaylistId = id;
+  renderPlaylists();
+}
+
+function closePlEditor() {
+  state.currentPlaylistId = null;
+  renderPlaylists();
+}
+
+function deletePlaylist(id) {
+  if (!confirm('DELETE?')) return;
+  apiCall(`/playlists/${id}`, { method: 'DELETE' })
+    .then(r => r.json())
+    .then(d => {
+      delete state.playlists[id];
+      state.currentPlaylistId = null;
+      renderPlaylists();
+    })
+    .catch(e => alert('Failed'));
+}
+
+function addSongToPlaylist(plId, songId) {
+  apiCall(`/playlists/${plId}/songs/${songId}`, { method: 'POST' })
+    .then(r => r.json())
+    .then(d => {
+      state.playlists[plId].songs.push(songId);
+      renderPlaylistSongs(state.playlists[plId]);
+      renderAvailable();
+    })
+    .catch(e => alert('Failed'));
+}
+
+function removeSongFromPlaylist(plId, songId) {
+  apiCall(`/playlists/${plId}/songs/${songId}`, { method: 'DELETE' })
+    .then(r => r.json())
+    .then(d => {
+      state.playlists[plId].songs = state.playlists[plId].songs.filter(s => s !== songId);
+      renderPlaylistSongs(state.playlists[plId]);
+      renderAvailable();
+    })
+    .catch(e => alert('Failed'));
+}
+
+// ============ LIBRARY OPS ============
+
+function deleteSong(id) {
+  if (!confirm('DELETE?')) return;
+  apiCall(`/library/${id}`, { method: 'DELETE' })
+    .then(r => r.json())
+    .then(d => {
+      delete state.library[id];
+      for (let pl of Object.values(state.playlists))
+        pl.songs = pl.songs.filter(s => s !== id);
+      renderAll();
+    })
+    .catch(e => alert('Failed'));
+}
+
+// ============ DRAG & DROP ============
+
+let draggedIdx = null;
+function dragStart(e, idx) { draggedIdx = idx; }
+function dragOver(e) { e.preventDefault(); }
+function dragDrop(e) {
+  e.preventDefault();
+  if (draggedIdx === null) return;
+  const pl = state.playlists[state.currentPlaylistId];
+  const from = draggedIdx;
+  const to = [...document.querySelectorAll('.pl-song')].indexOf(e.currentTarget);
+  if (from >= 0 && to >= 0 && from !== to) {
+    const sid = pl.songs[from];
+    pl.songs.splice(from, 1);
+    pl.songs.splice(to, 0, sid);
+    renderPlaylistSongs(pl);
+  }
+  draggedIdx = null;
+}
+
+// ============ SEARCH ============
+
+document.getElementById('ripSearch')?.addEventListener('input', renderRip);
+document.getElementById('libSearch')?.addEventListener('input', renderLibrary);
+document.getElementById('plSearch')?.addEventListener('input', () => {
+  if (state.currentPlaylistId) renderAvailable();
+});
+
+document.getElementById('customSong')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') addCustomSong();
+});
+document.getElementById('newPlName')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') createPlaylist();
+});
+
+// ============ INIT ============
+
+window.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('waveform_token');
+  const user = localStorage.getItem('waveform_user');
+  
+  if (!token) {
+    // No token, redirect to login
+    window.location.href = '/';
+    return;
+  }
+  
+  state.token = token;
+  state.user = user;
+  document.getElementById('userInfo').textContent = `${user} · SYSTEM READY`;
+  
+  loadAllData();
+});
+</script>
+
+</body>
+</html>

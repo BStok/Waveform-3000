@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WAVEFORM-3000 PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#090702;
+    --panel:#0f0a02;
+    --panel2:#120d03;
+    --amber:#ffb000;
+    --amber-dim:#6f4d00;
+    --cyan:#00d4ff;
+    --green:#00ff41;
+    --line:#2a1c00;
+    --text:#c89a3a;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    background:#050401;
+    overflow-x:hidden;
+}
+
+body{
+    font-family:'VT323', monospace;
+    color:var(--amber);
+    background:
+        radial-gradient(circle at center, rgba(255,176,0,0.03), transparent 60%),
+        linear-gradient(to bottom,#050401,#090702 40%,#060401);
+}
+
+body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:999;
+    opacity:.13;
+    background:repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.06) 0px,
+        rgba(255,255,255,.06) 1px,
+        transparent 1px,
+        transparent 4px
+    );
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:998;
+    background:radial-gradient(circle at center, transparent 55%, rgba(0,0,0,.5));
+}
+
+.hero-shell{
+    width:100%;
+    min-height:100vh;
+    padding:22px;
+    position:relative;
+}
+
+.hero-frame{
+    position:relative;
+    min-height:calc(100vh - 44px);
+    border:2px solid #3a2800;
+    background:
+        linear-gradient(to bottom, rgba(255,176,0,.02), transparent 30%),
+        linear-gradient(to right, rgba(255,176,0,.02), transparent 20%),
+        #080602;
+    box-shadow:
+        inset 0 0 0 1px rgba(255,176,0,.08),
+        inset 0 0 80px rgba(0,0,0,.9),
+        0 0 40px rgba(255,176,0,.06);
+
+    display:grid;
+    grid-template-columns:260px 1fr 270px;
+    grid-template-rows:100px 1fr auto;
+    overflow:hidden;
+}
+
+.corner-tag{
+    position:absolute;
+    top:12px;
+    left:12px;
+    font-size:12px;
+    color:var(--amber-dim);
+    letter-spacing:2px;
+    opacity:.8;
+}
+
+.topbar{
+    grid-column:1/4;
+    border-bottom:1px solid #322300;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    height:auto;
+    min-height:100px;
+    background:linear-gradient(to bottom, rgba(255,176,0,.06), rgba(255,176,0,.01));
+}
+
+.custom-headline {
+    font-family: 'VT323', monospace !important;
+    font-size: 3.2rem !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 0.9;
+    letter-spacing: 1px;
+    color: #ffffff !important;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+    margin-bottom: 0px;
+    margin-top: -8px;
+}
+
+.custom-headline .pro-badge {
+    font-family: 'VT323', monospace;
+    background-color: #ff7700;
+    color: #050401;
+    font-size: 1.2rem;
+    padding: 0px 6px;
+    font-weight: bold;
+    border-radius: 2px;
+    box-shadow: 0 0 6px rgba(255, 119, 0, 0.4);
+    text-shadow: none; 
+    line-height: 1.1;
+}
+
+.top-subtitle {
+    font-family: 'VT323', monospace;
+    font-size: 13.5px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.topbox{
+    border-right:1px solid #251900;
+    padding:6px 16px;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.topbox:last-child{
+    border-right:none;
+}
+
+.toplabel{
+    font-size:10px;
+    color:#7f5c12;
+    letter-spacing:2px;
+    margin-bottom:4px;
+}
+
+.topvalue{
+    font-family:'Press Start 2P', monospace;
+    font-size:12px;
+    color:#d8b16b;
+    line-height:1.3;
+}
+
+.topbox-last-child-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.signup-button {
+    background: linear-gradient(135deg, #ff7700, #ff9e00);
+    border: 2px solid #ffb000;
+    color: #050401;
+    padding: 10px 20px;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 119, 0, 0.6);
+    transition: all 0.2s ease;
+}
+
+.signup-button:hover {
+    box-shadow: 0 0 20px rgba(255, 119, 0, 0.8);
+    transform: scale(1.05);
+}
+
+.signup-button:active {
+    transform: scale(0.98);
+}
+
+.left-column,
+.right-column{
+    background:linear-gradient(to bottom, rgba(255,176,0,.025), transparent);
+}
+
+.left-column{
+    border-right:1px solid #261b00;
+}
+
+.right-column{
+    border-left:1px solid #261b00;
+}
+
+.module{
+    border-bottom:1px solid #221700;
+    padding:18px;
+    position:relative;
+}
+
+.module::before{
+    content:'';
+    position:absolute;
+    left:0;
+    top:0;
+    width:2px;
+    height:100%;
+    background:linear-gradient(to bottom, var(--amber), transparent);
+    opacity:.2;
+}
+
+.module-title{
+    font-family:'Press Start 2P', monospace;
+    font-size:9px;
+    color:#bb8b2e;
+    margin-top:10px;
+    margin-bottom:18px;
+    letter-spacing:2px;
+    line-height:1;
+}
+
+.status-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+    font-size:18px;
+}
+
+.feature-box{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    border:1px solid rgba(0,212,255,.18);
+    background:
+        linear-gradient(
+            to right,
+            rgba(0,212,255,.04),
+            rgba(255,176,0,.02)
+        );
+    color:var(--cyan);
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    transition:
+        transform .22s ease,
+        background .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+}
+
+.feature-box::before{
+    content:'';
+    position:absolute;
+    left:0;
+    top:0;
+    width:2px;
+    height:100%;
+    background:var(--cyan);
+    opacity:.25;
+    transition:all .22s ease;
+}
+
+.feature-box:hover{
+    transform:scale(1.1);
+    border-color:rgba(0,212,255,.65);
+    background:
+        linear-gradient(
+            to left,
+            rgba(0,212,255,.16),
+            rgba(255,176,0,.08)
+        );
+    box-shadow:
+        0 0 18px rgba(0,212,255,.18),
+        inset 0 0 18px rgba(0,212,255,.08);
+}
+
+.feature-box:hover::before{
+    width:5px;
+    opacity:1;
+    box-shadow:0 0 12px var(--cyan);
+}
+
+.feature-arrow{
+    font-size:22px;
+    color:var(--amber);
+    opacity:.35;
+    transform:translateX(-6px);
+    transition:
+        opacity .22s ease,
+        transform .22s ease,
+        text-shadow .22s ease;
+}
+
+.feature-box:hover .feature-arrow{
+    opacity:1;
+    transform:translateX(0);
+    text-shadow:0 0 10px var(--amber);
+}
+
+.led{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 10px var(--green);
+}
+
+.route-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:5px;
+}
+
+.route-grid span{
+    aspect-ratio:1;
+    border:1px solid #2d2000;
+    background:rgba(255,176,0,.04);
+}
+
+.route-grid span.active{
+    background:rgba(0,255,65,.5);
+    box-shadow:0 0 10px rgba(0,255,65,.4);
+}
+
+.center-stage{
+    position:relative;
+    overflow:hidden;
+}
+
+.blueprint-overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.14;
+    background-image:
+        linear-gradient(rgba(0,212,255,.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,.18) 1px, transparent 1px);
+    background-size:60px 60px;
+}
+
+.blueprint-lines{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+}
+
+.blueprint-lines svg{
+    width:100%;
+    height:100%;
+}
+
+.hero-image-wrap{
+    position:absolute;
+    height:calc(100%);
+    width:calc(100%);
+    inset:0;
+    padding:18px;
+}
+
+.hero-image{
+    width:100%;
+    height:100%;
+    object-fit:scale-down;
+    filter:
+        brightness(.78)
+        contrast(1.12)
+        saturate(.95);
+    border-left:1px solid rgba(255,176,0,.18);
+    border-right:1px solid rgba(255,176,0,.18);
+}
+
+.image-mask{
+    position:absolute;
+    inset:18px;
+    background:
+        radial-gradient(circle at center, transparent 45%, rgba(0,0,0,.45)),
+        linear-gradient(to top, rgba(0,0,0,.8), transparent 30%),
+        linear-gradient(to bottom, rgba(0,0,0,.45), transparent 20%);
+    pointer-events:none;
+}
+
+.machine-title{
+    position:absolute;
+    left:40px;
+    bottom:42px;
+    z-index:10;
+}
+
+.machine-title h1{
+    font-family:'Press Start 2P', monospace;
+    font-size:64px;
+    line-height:1.1;
+    color:#d3b06f;
+    text-shadow:
+        0 0 2px rgba(255,176,0,.5),
+        0 0 20px rgba(255,176,0,.08);
+}
+
+.machine-title p{
+    margin-top:16px;
+    font-size:28px;
+    letter-spacing:4px;
+    color:#8f6b1f;
+}
+
+.annotation{
+    position:absolute;
+    font-size:14px;
+    color:#00d4ff;
+    letter-spacing:2px;
+    opacity:.8;
+}
+
+.annotation::before{
+    content:'';
+    position:absolute;
+    width:90px;
+    height:1px;
+    background:#00d4ff;
+    opacity:.5;
+}
+
+.ann1{
+    top:120px;
+    left:50px;
+}
+
+.ann1::before{
+    left:120px;
+    top:10px;
+}
+
+.ann2{
+    top:180px;
+    right:80px;
+}
+
+.ann2::before{
+    right:110px;
+    top:10px;
+}
+
+
+
+.placeholder-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(.78) contrast(1.1) saturate(.85);
+    opacity: .92;
+}
+
+
+
+.ctrl{
+    border:1px solid #473100;
+    background:linear-gradient(to bottom,#151004,#0b0801);
+    padding:18px 0;
+    text-align:center;
+    font-size:20px;
+    color:#b79a62;
+    box-shadow:inset 0 0 20px rgba(0,0,0,.5);
+}
+
+.ctrl.active{
+    color:var(--green);
+    text-shadow:0 0 10px var(--green);
+}
+
+.vu-wrap{
+    display:flex;
+    gap:16px;
+    margin-top:20px;
+}
+
+.vu{
+    flex:1;
+    height:120px;
+    border:2px solid #2b1d00;
+    background:linear-gradient(to bottom,#1a1204,#0b0701);
+    position:relative;
+    overflow:hidden;
+}
+
+.vu::before{
+    content:'';
+    position:absolute;
+    left:50%;
+    bottom:10px;
+    width:2px;
+    height:80px;
+    background:#d7a648;
+    transform-origin:bottom;
+    animation:vuMove 1.4s ease-in-out infinite alternate;
+    box-shadow:0 0 10px rgba(255,176,0,.5);
+}
+
+@keyframes vuMove{
+    from{transform:rotate(-35deg)}
+    to{transform:rotate(25deg)}
+}
+
+.scope-row{
+    grid-column:1/4;
+    border-top:1px solid #2b1d00;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 340px;
+    background:#060401;
+}
+
+.scope-panel:nth-child(1) .module-title,
+.scope-panel:nth-child(2) .module-title,
+.scope-panel:nth-child(3) .module-title {
+    color: var(--green);
+    text-shadow: 0 0 10px var(--green);
+}
+
+.scope-panel:nth-child(1) .small-terminal,
+.scope-panel:nth-child(2) .small-terminal,
+.scope-panel:nth-child(3) .small-terminal {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 176, 0, 0.2);
+    border-radius: 2px;
+}
+
+.scope-panel{
+    border-right:1px solid #221700;
+    padding:18px;
+    position:relative;
+}
+
+.scope-panel:last-child{
+    border-right:none;
+}
+
+.scope-screen{
+    height:140px;
+    margin-top:14px;
+    border:2px solid #102a10;
+    background:
+        linear-gradient(rgba(0,255,65,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,.08) 1px, transparent 1px),
+        #020601;
+    background-size:20px 20px;
+    overflow:hidden;
+    position:relative;
+}
+
+.wave{
+    position:absolute;
+    inset:0;
+}
+
+.wave svg{
+    width:100%;
+    height:100%;
+}
+
+.footer-warning{
+    position:absolute;
+    bottom:14px;
+    left:20px;
+    font-size:12px;
+    color:#8d6821;
+    letter-spacing:2px;
+}
+
+.system-lines{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+}
+
+.system-lines svg{
+    width:100%;
+    height:100%;
+}
+
+.small-terminal{
+    margin-top:18px;
+    font-size:20px;
+    line-height:1.4;
+    color:#e0ad4e;
+}
+
+.status-green{
+    color:var(--green);
+}
+
+.status-cyan{
+    color:var(--cyan);
+}
+
+.footer-section {
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(255,176,0,.02), transparent 30%);
+    border-top: 1px solid #322300;
+    padding: 40px 22px;
+    margin-top: 22px;
+}
+
+.footer-content {
+    font-family: 'VT323', monospace;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.footer-top {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 176, 0, 0.1);
+}
+
+.footer-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-brand-name {
+    font-size: 18px;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+    font-weight: bold;
+}
+
+.footer-brand-desc {
+    font-size: 12px;
+    color: var(--cyan);
+    letter-spacing: 1px;
+    text-shadow: 0 0 4px rgba(0, 212, 255, 0.3);
+}
+
+.footer-middle {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-column-title {
+    font-size: 14px;
+    color: var(--amber);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 2px rgba(239, 233, 204, 0.4);
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.footer-column-item {
+    font-size: 14px;
+    color: var(--amber);
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+}
+
+.footer-statement {
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--cyan);
+    letter-spacing: 1px;
+    text-shadow: 0 0 4px rgba(0, 212, 255, 0.4);
+    margin-bottom: 20px;
+    padding: 15px;
+    border-top: 1px solid rgba(255, 176, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 176, 0, 0.1);
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    font-size: 10px;
+    color: var(--amber-dim);
+    letter-spacing: 1px;
+    opacity: 0.7;
+}
+
+.footer-copyright {
+    flex: 1;
+}
+
+.footer-status {
+    color: var(--green);
+}
+
+.cta-section {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(255,176,0,.08), rgba(0,212,255,.04));
+    border-top: 2px solid #322300;
+    border-bottom: 2px solid #322300;
+    padding: 40px 22px;
+    text-align: center;
+    margin-top: 22px;
+}
+
+.cta-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.cta-text {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+}
+
+.cta-button {
+    background: linear-gradient(135deg, #ff7700, #ff9e00);
+    border: 3px solid #ffb000;
+    color: #050401;
+    padding: 16px 40px;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 119, 0, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.cta-button:hover {
+    box-shadow: 0 0 30px rgba(255, 119, 0, 1), inset 0 0 15px rgba(255, 255, 255, 0.3);
+    transform: scale(1.08);
+}
+
+.cta-button:active {
+    transform: scale(0.95);
+}
+
+/* MODAL DIALOG */
+.auth-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 0, 0.95);
+    z-index: 5000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.auth-modal.show {
+    display: flex;
+}
+
+.auth-box {
+    background: var(--panel);
+    border: 3px solid var(--amber);
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(255,176,0,.3);
+    max-width: 400px;
+    animation: modalPopIn .4s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+}
+
+@keyframes modalPopIn {
+    from { transform: scale(0) rotateZ(-5deg); }
+    to { transform: scale(1) rotateZ(0); }
+}
+
+.auth-box h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 24px;
+    color: var(--amber);
+    margin-bottom: 8px;
+    text-shadow: 0 0 4px var(--amber);
+}
+
+.auth-box .subtitle {
+    font-size: 11px;
+    color: var(--amber-dim);
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+}
+
+.auth-input-group {
+    margin-bottom: 16px;
+}
+
+.auth-input-group input {
+    width: 100%;
+    background: var(--crt);
+    border: 2px solid var(--amber-dim);
+    padding: 12px;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    color: var(--amber);
+    caret-color: var(--green);
+    box-sizing: border-box;
+}
+
+.auth-input-group input::placeholder {
+    color: var(--amber-dim);
+}
+
+.auth-button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.auth-btn {
+    background: var(--amber);
+    border: none;
+    padding: 14px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--bg);
+    cursor: pointer;
+    box-shadow: inset -3px -3px 0 var(--amber-dim);
+    letter-spacing: 1px;
+    transition: all .1s;
+    text-transform: uppercase;
+}
+
+.auth-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+
+#authError {
+    color: #FF3131;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    margin-top: 12px;
+    text-align: center;
+    display: none;
+    text-shadow: 0 0 6px #FF3131;
+    line-height: 1.4;
+}
+
+.auth-status {
+    font-size: 12px;
+    color: var(--green);
+    text-shadow: 0 0 4px var(--green);
+    margin-top: 16px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .1s;
+}
+
+.close-modal:hover {
+    background: rgba(255,176,0,.1);
+    box-shadow: 0 0 10px rgba(255,176,0,.3);
+}
+
+</style>
+</head>
+<body>
+
+<!-- AUTH MODAL - Hidden by default -->
+<div class="auth-modal" id="authModal">
+  <div class="auth-box">
+    <button class="close-modal" onclick="closeAuthModal()">✕</button>
+    
+    <h1>WAVEFORM</h1>
+    <div class="subtitle" id="authModeTitle">▼ SIGN IN OR CREATE ACCOUNT ▼</div>
+    
+    <div class="auth-input-group">
+      <input id="username" type="text" placeholder="USERNAME" autofocus>
+    </div>
+    
+    <div class="auth-input-group">
+      <input id="password" type="password" placeholder="PASSWORD">
+    </div>
+    
+    <div class="auth-button-group">
+      <button class="auth-btn" onclick="handleSignup()">NEW ACCOUNT</button>
+      <button class="auth-btn" onclick="handleLogin()">LOGIN</button>
+    </div>
+    
+    <div id="authError"></div>
+    <div class="auth-status" id="authStatus"></div>
+  </div>
+</div>
+
+<section class="hero-shell">
+
+<div class="hero-frame">
+
+<div class="topbar">
+
+<div class="topbox header-glow-container">
+    <div class="toplabel">SYSTEM NAME</div>
+    <div class="topvalue custom-headline">
+        WAVEFORM-3000 <span class="pro-badge">PRO</span>
+    </div>
+    <div class="top-subtitle">STREAM WITHOUT LIMITS. NO ADS. NO CLUTTER. PURE AUDIO.</div>
+</div>
+
+<div class="topbox">
+<div class="toplabel">MODEL</div>
+<div class="topvalue">SIGNAL TRANSPORT MK-II</div>
+</div>
+
+<div class="topbox">
+<div class="toplabel">OS VERSION</div>
+<div class="topvalue">2.77J</div>
+</div>
+
+<div class="topbox">
+<div class="toplabel">STATUS</div>
+<div class="topbox-last-child-wrapper">
+<div class="topvalue" style="color:#00ff41">SYSTEM ACTIVE</div>
+<button class="signup-button" onclick="openAuthModal()">SIGN UP / LOGIN</button>
+</div>
+</div>
+
+</div>
+
+<div class="left-column">
+
+<div class="module">
+<div class="module-title">SIGNAL STATUS</div>
+
+<div class="status-row"><span>INPUT 01</span><span class="status-green">-12 dB</span></div>
+<div class="status-row"><span>INPUT 02</span><span class="status-green">-08 dB</span></div>
+<div class="status-row"><span>INPUT 03</span><span class="status-green">-16 dB</span></div>
+<div class="status-row"><span>MASTER</span><span class="status-green">+02 dB</span></div>
+
+</div>
+
+<div class="module">
+<div class="module-title">SIGNS FROM UNIVERSE.</div>
+
+<div class="route-grid">
+<img id="random-image" alt="routing matrix" 
+class="placeholder-image"
+style="width: 100%; height: 100%; grid-column: 1/-1;"><div style="grid-column: 1/-1; width: 100%; height: 100%; background: rgba(255,176,0,.1);"></div>
+</div>
+
+</div>
+
+<div class="module">
+<div class="module-title">SYSTEM LOG</div>
+
+<div class="small-terminal">
+12:00 SYSTEM BOOT<br>
+12:01 RAM CHECK ........ <span class="status-green">OK</span><br>
+12:03 SIGNAL ROUTE ..... <span class="status-green">OK</span><br>
+12:04 CRT CALIBRATION .. <span class="status-green">OK</span><br>
+</div>
+
+</div>
+
+</div>
+
+<div class="center-stage">
+
+<div class="blueprint-overlay"></div>
+
+<div class="blueprint-lines">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+<path d="M0 200 L250 200 L320 300 L500 300" stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.5"/>
+<path d="M1000 150 L800 150 L700 240" stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.4"/>
+<path d="M150 900 L400 720 L900 720" stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.35"/>
+</svg>
+</div>
+
+<div class="hero-image-wrap">
+    <img class="hero-image" src="https://philosophical-ivory-rcloyv4k57.edgeone.app/image.png" alt="cosmic waveform hero image">
+<div style="width:100%;height:100%;background:linear-gradient(135deg, rgba(255,176,0,.05), rgba(0,212,255,.05));"></div>
+<div class="image-mask"></div>
+</div>
+
+<div class="annotation ann1">SIGNAL CONSCIOUSNESS FIELD</div>
+<div class="annotation ann2">AUDIO MEMORY CONSTELLATION</div>
+
+<div class="system-lines">
+<svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+<rect x="20" y="20" width="960" height="960" stroke="#6f4d00" fill="none" opacity="0.2"/>
+<line x1="500" y1="0" x2="500" y2="1000" stroke="#6f4d00" opacity="0.08"/>
+<line x1="0" y1="500" x2="1000" y2="500" stroke="#6f4d00" opacity="0.08"/>
+</svg>
+</div>
+
+</div>
+
+<div class="right-column">
+
+<div class="module">
+<div class="module-title">START LISTENING TODAY</div>
+
+<div class="feature-box" onclick="openAuthModal()">
+    <span class="feature-arrow">></span>
+    <span>STREAM MUSIC ENDLESSLY</span>
+</div>
+
+<div class="feature-box" onclick="openAuthModal()">
+    <span class="feature-arrow">></span>
+    <span>MAKE PLAYLISTS OF YOUR CHOICE</span>
+</div>
+
+<div class="feature-box">
+    <span class="feature-arrow">></span>
+    <span>SHUFFLE, REPEAT, SPEED UP</span>
+</div>
+
+<div class="feature-box">
+    <span class="feature-arrow">></span>
+    <span>MUSIC ON THE GO</span>
+</div>
+</div>
+
+<div class="module">
+<div class="module-title">SIGNAL TELEMETRY</div>
+
+<div class="small-terminal">
+PEAK HOLD ........ ENABLED<br>
+FREQ LOCK ........ STABLE<br>
+INPUT LATENCY .... 02ms<br>
+TAPE HEALTH ...... 94%<br>
+MAGNETIC BIAS .... NOMINAL
+</div>
+
+</div>
+
+<div class="module">
+<div class="module-title">SYSTEM DIAGNOSTICS</div>
+
+<div class="small-terminal">
+DISK USAGE ....... 68%<br>
+LIBRARY TRACKS ... 12847<br>
+TOTAL TIME ....... 354:17:22<br>
+VOLTAGE .......... +14.8V<br>
+TEMPERATURE ...... 34.2C
+</div>
+
+</div>
+
+</div>
+
+<div class="scope-row">
+
+<div class="scope-panel">
+<div class="module-title">CORE FEATURES</div>
+
+<ol class="small-terminal">
+<li>UNLIMITED PLAYLISTS</li>
+<li>DYNAMIC QUEUE SYSTEM</li>
+<li>CUSTOM SONG ORDERING</li>
+<li>SPEED CONTROL FOR PODCASTS</li>
+</ol>
+
+</div>
+
+<div class="scope-panel">
+<div class="module-title">PLAYBACK OPTIONS</div>
+
+<div class="small-terminal">
+MULTIPLE REPEAT MODES <br>
+SHUFFLE MODE<br>
+LOOP CONTROL <br>
+GAPLESS PLAYBACK
+</div>
+
+</div>
+
+<div class="scope-panel">
+<div class="module-title">CLEAN EXPERIENCE</div>
+
+<div class="small-terminal">
+NO ADS, GUARANTEED<br>
+NO SPAM, EVER<br>
+NO CLUTTER, ZERO<br>
+PURE AUDIO. FOCUS.
+</div>
+
+</div>
+
+<div class="scope-panel">
+<div class="module-title">AUTHORIZED SYSTEM</div>
+
+<div class="small-terminal">
+*HIGH VOLTAGE TERMINAL*<br>
+*AUTHORIZED SERVICES ONLY*<br>
+MADE IN CHANDIGARH<br>
+05.2026
+</div>
+
+</div>
+
+</div>
+
+<div class="footer-warning">
+WARNING: DO NOT OPEN COVER DURING OPERATION
+</div>
+
+</div>
+
+<section class="cta-section">
+<div class="cta-content">
+<div class="cta-text">Power up your listening experience, Join today</div>
+<button class="cta-button" onclick="openAuthModal()">SIGN UP / LOGIN</button>
+</div>
+</section>
+
+<footer class="footer-section">
+<div class="footer-content">
+
+<div class="footer-top">
+<div class="footer-logo">
+<div class="footer-brand-name">WAVEFORM-3000</div>
+<div class="footer-brand-desc">Free Audio Streaming Platform</div>
+</div>
+</div>
+
+<div class="footer-middle">
+<div class="footer-column">
+<div class="footer-column-title">NAVIGATION</div>
+<div class="footer-column-item">Home</div>
+<div class="footer-column-item">Playlists</div>
+<div class="footer-column-item">Queue</div>
+<div class="footer-column-item">Library</div>
+</div>
+
+<div class="footer-column">
+<div class="footer-column-title">SYSTEM</div>
+<div class="footer-column-item">Status</div>
+<div class="footer-column-item">Updates</div>
+<div class="footer-column-item">Version 2.77J</div>
+<div class="footer-column-item">Uptime</div>
+</div>
+
+<div class="footer-column">
+<div class="footer-column-title">SOCIALS</div>
+<div class="footer-column-item">Linkedin</div>
+<div class="footer-column-item">Discord</div>
+<div class="footer-column-item">GitHub</div>
+<div class="footer-column-item">Gmail</div>
+</div>
+
+<div class="footer-column">
+<div class="footer-column-title">CONTACT</div>
+<div class="footer-column-item">sanya.uiet.pu@gmail.com</div>
+<div class="footer-column-item">Support</div>
+<div class="footer-column-item">Privacy Policy</div>
+<div class="footer-column-item">Terms</div>
+</div>
+</div>
+
+<div class="footer-statement">
+SIGNAL IS ETERNAL. MUSIC IS THE UNIVERSE. WAVEFORM-3000 PRO IS YOUR PORTAL TO INFINITE AUDIO REALMS. EXPERIENCE THE FUTURE OF STREAMING TODAY.
+</div>
+
+<div class="footer-bottom">
+<span class="footer-copyright">© 2026 WAVEFORM-3000 PRO | ALL RIGHTS RESERVED</span>
+<span class="footer-status">STATUS: ONLINE | UPTIME: 99.9%</span>
+</div>
+
+</div>
+</footer>
+
+</section>
+
+<script>
+const API = "http://localhost:5000/api";
+
+// Modal control functions
+function openAuthModal() {
+  document.getElementById('authModal').classList.add('show');
+  document.getElementById('username').focus();
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('show');
+  document.getElementById('authError').style.display = 'none';
+  document.getElementById('authStatus').textContent = '';
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+}
+
+// Close modal when clicking outside
+document.getElementById('authModal').addEventListener('click', (e) => {
+  if (e.target.id === 'authModal') {
+    closeAuthModal();
+  }
+});
+
+function handleLogin() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const error = document.getElementById('authError');
+  const status = document.getElementById('authStatus');
+
+  error.style.display = 'none';
+  status.textContent = 'CONNECTING...';
+
+  if (!username || !password) {
+    error.textContent = 'ENTER USERNAME & PASSWORD';
+    error.style.display = 'block';
+    status.textContent = '';
+    return;
+  }
+
+  fetch(`${API}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  })
+    .then(async (res) => {
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Login failed');
+      return data;
+    })
+    .then((data) => {
+      localStorage.setItem('waveform_token', data.token);
+      localStorage.setItem('waveform_user', data.username);
+      
+      status.textContent = '✓ LOGGED IN - LOADING...';
+      
+      setTimeout(() => {
+        window.location.href = '/app';
+      }, 800);
+    })
+    .catch((e) => {
+      error.textContent = e.message || 'LOGIN FAILED';
+      error.style.display = 'block';
+      status.textContent = '';
+    });
+}
+
+function handleSignup() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const error = document.getElementById('authError');
+  const status = document.getElementById('authStatus');
+
+  error.style.display = 'none';
+  status.textContent = 'CONNECTING...';
+
+  if (!username || !password) {
+    error.textContent = 'ENTER USERNAME & PASSWORD';
+    error.style.display = 'block';
+    status.textContent = '';
+    return;
+  }
+
+  fetch(`${API}/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  })
+    .then(async (res) => {
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Signup failed');
+      return data;
+    })
+    .then((data) => {
+      localStorage.setItem('waveform_token', data.token);
+      localStorage.setItem('waveform_user', data.username);
+      
+      status.textContent = '✓ ACCOUNT CREATED - LOADING...';
+      
+      setTimeout(() => {
+        window.location.href = '/app';
+      }, 800);
+    })
+    .catch((e) => {
+      error.textContent = e.message || 'SIGNUP FAILED';
+      error.style.display = 'block';
+      status.textContent = '';
+    });
+}
+
+// Allow Enter key
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('authModal');
+  if (!modal.classList.contains('show')) return;
+  
+  if (e.key === 'Enter') {
+    if (document.getElementById('password') === document.activeElement) {
+      handleLogin();
+    } else if (document.getElementById('username') === document.activeElement) {
+      document.getElementById('password').focus();
+    }
+  }
+  
+  if (e.key === 'Escape') {
+    closeAuthModal();
+  }
+});
+
+// Check if already logged in
+window.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('waveform_token');
+  if (token) {
+    window.location.href = '/app';
+  }
+});
+</script>
+<script>
+const images = [
+    "https://i.pinimg.com/736x/1a/45/da/1a45da10ae8d3a9e8950c53de1fc0ca7.jpg",
+    "https://i.pinimg.com/736x/26/9a/96/269a9609a28393a4f12769ed68d1def8.jpg",
+    "ahttps://i.pinimg.com/1200x/e9/64/5c/e9645c4c3f9ebd96ccc2b14610dedd67.jpg",
+    "https://i.pinimg.com/736x/c4/bf/6a/c4bf6a3c332e3b30fff52f2878408a57.jpg",
+    "https://i.pinimg.com/736x/46/33/e3/4633e35b69242f79456d022457c6615d.jpg",
+    "https://i.pinimg.com/1200x/c9/17/a1/c917a10bc3b352052fc2528da699faf0.jpg",
+   
+];
+
+const randomImage = images[Math.floor(Math.random() * images.length)];
+
+document.getElementById("random-image").src = randomImage;
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# env
+.env
+
+# python
+__pycache__/
+*.pyc
+
+# generated media
+downloads/
+storage/
+music/
+zips/
+*.zip
+
+# temp
+temp/
