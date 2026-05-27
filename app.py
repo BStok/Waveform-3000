@@ -92,25 +92,10 @@ def init_db_pool():
 
 @contextmanager
 def get_db():
-    """Get database connection from pool"""
-    conn = None
-    try:
-        conn = db_pool.getconn()
-        yield conn
-        conn.commit()
-    except psycopg2.pool.PoolError as e:
-        logger.error(f"Connection pool exhausted: {e}")
-        if conn:
-            conn.rollback()
-        raise RuntimeError("Database connection pool exhausted. Request rejected.")
-    except Exception as e:
-        if conn:
-            conn.rollback()
-        logger.error(f"Database transaction error: {e}", exc_info=True)
-        raise
-    finally:
-        if conn:
-            db_pool.putconn(conn)
+    return psycopg2.connect(
+        os.environ["DATABASE_URL"],
+        sslmode="require"
+    )
 
 def init_schema():
     """Create database schema at startup"""
@@ -758,3 +743,6 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"✗ FATAL: {e}", exc_info=True)
         raise
+
+if __name__ == "main":
+    app.run(host="0.0.0.0", port=5000)
