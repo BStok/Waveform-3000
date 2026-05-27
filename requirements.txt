@@ -1,4 +1,11 @@
-flask
+Flask
 flask-cors
-yt-dlp
 gunicorn
+psycopg2-binary
+PyJWT
+Werkzeug
+email-validator
+python-dotenv
+yt-dlp
+requests
+resend
