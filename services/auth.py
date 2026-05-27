@@ -116,6 +116,9 @@ def handle_login(data, get_db):
 
             if not verified:
                 return None, None, "Verify email first"
+            
+            if not password_hash:
+                return None, None, "Password not set"
 
             if not check_password_hash(password_hash, password):
                 return None, None, "Invalid credentials"
@@ -297,7 +300,9 @@ def handle_set_password(data, get_db):
     password = data.get("password", "").strip()
 
     if len(password) < 6:
-        return None, "Password must be at least 6 chars"
+        return None, "Password too short"
+
+    password_hash = generate_password_hash(password)
 
     try:
         with get_db() as conn:
@@ -305,35 +310,23 @@ def handle_set_password(data, get_db):
             cur = conn.cursor()
 
             cur.execute("""
-                SELECT
-                    user_id,
-                    email_verified
+                UPDATE users
+                SET password_hash = %s
+                WHERE email = %s
+            """, (
+                password_hash,
+                email
+            ))
+
+            cur.execute("""
+                SELECT user_id
                 FROM users
                 WHERE email = %s
             """, (email,))
 
             user = cur.fetchone()
 
-            if not user:
-                return None, "User not found"
-
-            user_id, verified = user
-
-            if not verified:
-                return None, "Verify email first"
-
-            password_hash = generate_password_hash(password)
-
-            cur.execute("""
-                UPDATE users
-                SET password_hash = %s
-                WHERE user_id = %s
-            """, (
-                password_hash,
-                user_id
-            ))
-
-            token = generate_token(user_id, email)
+            token = generate_token(user[0], email)
 
             return {
                 "token": token,
@@ -344,7 +337,7 @@ def handle_set_password(data, get_db):
         logger.error(e, exc_info=True)
 
         return None, "Internal server error"
-
+    
 def handle_google_login(google_token_payload, get_db):
     """
     Handle Google OAuth login.
