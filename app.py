@@ -94,7 +94,7 @@ def init_db_pool():
 def get_db():
     return psycopg2.connect(
         os.environ["DATABASE_URL"],
-        sslmode="require"
+       
     )
 
 def init_schema():
