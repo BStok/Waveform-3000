@@ -11,7 +11,7 @@ import logging
 import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, jsonify, request, send_file, send_from_directory
 from flask_cors import CORS
 import yt_dlp
 import psycopg2
@@ -122,10 +122,25 @@ def check_ffmpeg():
     """Verify ffmpeg is available"""
     ffmpeg_path = shutil.which("ffmpeg")
     if not ffmpeg_path:
+        try:
+            import imageio_ffmpeg
+            ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+        except Exception as e:
+            logger.warning(f"imageio-ffmpeg fallback unavailable: {e}")
+    if not ffmpeg_path:
         logger.error("✗ CRITICAL: ffmpeg not found in PATH")
         raise RuntimeError("ffmpeg is required but not installed")
     logger.info(f"✓ ffmpeg found at: {ffmpeg_path}")
     return ffmpeg_path
+
+FFMPEG_PATH = None
+
+def get_ffmpeg_path():
+    """Resolve ffmpeg for both local python runs and gunicorn imports."""
+    global FFMPEG_PATH
+    if not FFMPEG_PATH:
+        FFMPEG_PATH = check_ffmpeg()
+    return FFMPEG_PATH
 
 # ============ AUTHENTICATION ROUTES ============
 
@@ -432,7 +447,7 @@ def start_download():
         
         thread = threading.Thread(
             target=run_download_job,
-            args=(job_id, user_id, songs, ffmpeg_path),
+            args=(job_id, user_id, songs, get_ffmpeg_path()),
             daemon=True
         )
         thread.start()
@@ -724,6 +739,16 @@ def remove_song_from_playlist(playlist_id, song_id):
 
 # ============ STATIC FILES ============
 
+@app.route("/assets/<path:filename>")
+def template_asset(filename):
+    """Serve assets referenced by templates."""
+    return send_from_directory("templates/assets", filename)
+
+@app.route("/favicon.ico")
+def favicon():
+    """Serve browser default favicon request."""
+    return send_from_directory("templates/assets", "waveformfavicon.jpg", mimetype="image/jpeg")
+
 @app.route("/")
 def home():
     """Serve landing page"""
@@ -741,7 +766,7 @@ if __name__ == "__main__":
         logger.info("Starting WAVEFORM-3000 PRO Server")
         logger.info("=" * 60)
         
-        ffmpeg_path = check_ffmpeg()
+        get_ffmpeg_path()
         init_db_pool()
         # init_schema()
         
