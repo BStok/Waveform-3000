@@ -437,7 +437,7 @@ def start_download():
         )
         thread.start()
         
-        return jsonify({"job_id": job_id})
+        return jsonify({"job_id": job_id, "jobId": job_id})
     
     except Exception as e:
         logger.error(f"[DOWNLOAD] {e}", exc_info=True)
@@ -448,6 +448,11 @@ def start_download():
 def job_status(job_id):
     """Get job status"""
     try:
+        try:
+            uuid.UUID(str(job_id))
+        except ValueError:
+            return jsonify({"error": "Invalid job id"}), 400
+
         with get_db() as conn:
             cur = conn.cursor(cursor_factory=RealDictCursor)
             

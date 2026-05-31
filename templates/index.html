@@ -647,36 +647,63 @@ function startDownload() {
   const songs = Array.from(state.ripSelected).map(i => all[i]);
   
   apiCall('/download', { method: 'POST', body: JSON.stringify({ songs }) })
-    .then(r => r.json())
+    .then(async r => {
+      if (!r) throw new Error('Login expired');
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Download failed');
+      return d;
+    })
     .then(d => {
-      state.downloadJobId = d.job_id;
+      const jobId = d.job_id || d.jobId;
+      if (!jobId) throw new Error('Download job was not created');
+
+      state.downloadJobId = jobId;
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('progressCount').textContent = `00/${p2(songs.length)}`;
+      document.getElementById('progressCurrent').textContent = 'Starting...';
       document.getElementById('progressBox').classList.add('on');
       pollDownload();
     })
-    .catch(e => alert('Failed'));
+    .catch(e => alert(e.message || 'Failed'));
 }
 
 function pollDownload() {
+  if (!state.downloadJobId) {
+    document.getElementById('progressBox').classList.remove('on');
+    return;
+  }
+
   clearInterval(state.downloadPollInterval);
   state.downloadPollInterval = setInterval(async () => {
     try {
       const r = await apiCall(`/status/${state.downloadJobId}`);
+      if (!r) return;
+
       const d = await r.json();
-      const pct = d.total > 0 ? Math.round(d.progress / d.total * 100) : 0;
+      if (!r.ok) throw new Error(d.error || 'Status check failed');
+
+      const progress = Number(d.progress || 0);
+      const total = Number(d.total || 0);
+      const pct = total > 0 ? Math.round(progress / total * 100) : 0;
       document.getElementById('progressFill').style.width = pct + '%';
-      document.getElementById('progressCount').textContent = `${p2(d.progress)}/${p2(d.total)}`;
+      document.getElementById('progressCount').textContent = `${p2(progress)}/${p2(total)}`;
       document.getElementById('progressCurrent').textContent = d.current || 'Processing...';
       if (d.status === 'done') {
         clearInterval(state.downloadPollInterval);
         setTimeout(() => {
           document.getElementById('progressBox').classList.remove('on');
           alert(`✓ Added ${d.progress} songs`);
+          state.downloadJobId = null;
           state.ripSelected.clear();
           state.customSongs = [];
           loadAllData();
         }, 1000);
       }
-    } catch (e) { }
+    } catch (e) {
+      clearInterval(state.downloadPollInterval);
+      state.downloadJobId = null;
+      document.getElementById('progressCurrent').textContent = e.message || 'Download status failed';
+    }
   }, 500);
 }
 
