@@ -14,3 +14,11 @@ No adds, No clutter, Pure Audio.
 <img width="306" height="608" alt="image" src="https://github.com/user-attachments/assets/25a10e78-81a9-449e-92f8-1adb337eaf0c" />
 
 🌐🔗 https://waveform-3000.onrender.com/
+
+## Render download setup
+
+YouTube may block Render datacenter traffic unless yt-dlp uses cookies. Export a Netscape-format `cookies.txt` from a browser session and set one of these Render environment variables:
+
+- `YOUTUBE_COOKIES_B64`: base64-encoded contents of `cookies.txt`
+- `YOUTUBE_COOKIES`: raw `cookies.txt` contents, with newlines preserved or escaped as `\n`
+- `YOUTUBE_COOKIES_PATH`: path to a cookies file available on the server

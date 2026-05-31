@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 import os
+import base64
 import shutil
 import threading
 import uuid
@@ -134,6 +135,7 @@ def check_ffmpeg():
     return ffmpeg_path
 
 FFMPEG_PATH = None
+YOUTUBE_COOKIES_FILE = None
 
 def get_ffmpeg_path():
     """Resolve ffmpeg for both local python runs and gunicorn imports."""
@@ -141,6 +143,36 @@ def get_ffmpeg_path():
     if not FFMPEG_PATH:
         FFMPEG_PATH = check_ffmpeg()
     return FFMPEG_PATH
+
+def get_youtube_cookies_file():
+    """Return a cookies.txt path for yt-dlp when provided through env vars."""
+    global YOUTUBE_COOKIES_FILE
+
+    cookies_path = os.environ.get("YOUTUBE_COOKIES_PATH", "").strip()
+    if cookies_path:
+        if os.path.exists(cookies_path):
+            return cookies_path
+        logger.warning("YOUTUBE_COOKIES_PATH is set but the file does not exist")
+
+    cookies_b64 = os.environ.get("YOUTUBE_COOKIES_B64", "").strip()
+    cookies_text = os.environ.get("YOUTUBE_COOKIES", "").strip()
+
+    if not cookies_b64 and not cookies_text:
+        return None
+
+    if not YOUTUBE_COOKIES_FILE:
+        os.makedirs(TEMP_DIR, exist_ok=True)
+        YOUTUBE_COOKIES_FILE = os.path.join(TEMP_DIR, "youtube_cookies.txt")
+
+    if cookies_b64:
+        cookies_text = base64.b64decode(cookies_b64).decode("utf-8")
+    else:
+        cookies_text = cookies_text.replace("\\n", "\n")
+
+    with open(YOUTUBE_COOKIES_FILE, "w", encoding="utf-8") as f:
+        f.write(cookies_text)
+
+    return YOUTUBE_COOKIES_FILE
 
 # ============ AUTHENTICATION ROUTES ============
 
@@ -296,7 +328,14 @@ def run_download_job(job_id, user_id, songs, ffmpeg_path):
             "prefer_ffmpeg": True,
             "socket_timeout": 30,
         }
-        
+
+        cookies_file = get_youtube_cookies_file()
+        if cookies_file:
+            ydl_opts["cookiefile"] = cookies_file
+            logger.info("[DOWNLOAD] Using YouTube cookies file")
+        else:
+            logger.warning("[DOWNLOAD] No YouTube cookies configured; YouTube may block Render downloads")
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             for idx, song_query in enumerate(songs):
                 # Check for cancellation
@@ -747,7 +786,7 @@ def template_asset(filename):
 @app.route("/favicon.ico")
 def favicon():
     """Serve browser default favicon request."""
-    return send_from_directory("templates/assets", "waveformfavicon.jpg", mimetype="image/jpeg")
+    return send_from_directory("templates/assets", "favicon.ico", mimetype="image/x-icon")
 
 @app.route("/")
 def home():
