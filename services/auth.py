@@ -44,6 +44,30 @@ def generate_token(user_id, email, expires_in_days=7):
     return token
 
 
+def generate_password_setup_token(user_id, email, expires_in_minutes=15):
+    payload = {
+        "user_id": str(user_id),
+        "email": email,
+        "purpose": "set_password",
+        "exp": datetime.utcnow() + timedelta(minutes=expires_in_minutes)
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+
+def verify_password_setup_token(token):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        if payload.get("purpose") != "set_password":
+            return None
+        return payload
+    except jwt.ExpiredSignatureError:
+        logger.warning("Password setup token expired")
+        return None
+    except jwt.InvalidTokenError as e:
+        logger.warning(f"Invalid password setup token: {e}")
+        return None
+
+
 def verify_token(token):
     """
     Verify JWT token and return payload.
@@ -191,41 +215,63 @@ def handle_signup(data, get_db):
         with get_db() as conn:
             cur = conn.cursor()
 
-            cur.execute(
-                "SELECT user_id FROM users WHERE email = %s",
-                (email,)
-            )
-
-            if cur.fetchone():
-                return None, "Email already exists"
-
-            user_id = str(uuid.uuid4())
-
             cur.execute("""
-                INSERT INTO users (
+                SELECT
+                    user_id,
+                    email_verified,
+                    password_hash
+                FROM users
+                WHERE email = %s
+            """, (email,))
+
+            existing_user = cur.fetchone()
+
+            if existing_user:
+                user_id, email_verified, password_hash = existing_user
+
+                if password_hash:
+                    return None, "Email already exists"
+
+                cur.execute("""
+                    UPDATE users
+                    SET
+                        email_verified = FALSE,
+                        otp_hash = %s,
+                        otp_expiry = %s,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = %s
+                """, (
+                    otp_hash,
+                    otp_expiry,
+                    user_id
+                ))
+            else:
+                user_id = str(uuid.uuid4())
+
+                cur.execute("""
+                    INSERT INTO users (
+                        user_id,
+                        email,
+                        auth_method,
+                        email_verified,
+                        otp_hash,
+                        otp_expiry
+                    )
+                    VALUES (%s,%s,%s,%s,%s,%s)
+                """, (
                     user_id,
                     email,
-                    auth_method,
-                    email_verified,
+                    "password",
+                    False,
                     otp_hash,
                     otp_expiry
-                )
-                VALUES (%s,%s,%s,%s,%s,%s)
-            """, (
-                user_id,
-                email,
-                "password",
-                False,
-                otp_hash,
-                otp_expiry
-            ))
+                ))
 
         send_otp_email(email, otp)
 
         return {
-            "otp_required":True,
-            "email":email
-
+            "otp_required": True,
+            "email": email
         }, None
 
     except Exception as e:
@@ -268,6 +314,9 @@ def handle_verify_email(data, get_db):
             if email_verified:
                 return None, "Already verified"
 
+            if not otp_hash or not otp_expiry:
+                return None, "OTP not found"
+
             if datetime.utcnow() > otp_expiry:
                 return None, "OTP expired"
 
@@ -279,14 +328,16 @@ def handle_verify_email(data, get_db):
                 SET
                     email_verified = TRUE,
                     otp_hash = NULL,
-                    otp_expiry = NULL
+                    otp_expiry = NULL,
+                    updated_at = CURRENT_TIMESTAMP
                 WHERE user_id = %s
             """, (user_id,))
 
-           
             return {
                 "verified": True,
-                "email": email
+                "email": email,
+                "password_required": True,
+                "setup_token": generate_password_setup_token(user_id, email)
             }, None
 
     except Exception as e:
@@ -295,7 +346,16 @@ def handle_verify_email(data, get_db):
 
 def handle_set_password(data, get_db):
 
-    email = data.get("email", "").strip().lower()
+    setup_token = data.get("setup_token", "").strip()
+
+    token_payload = verify_password_setup_token(setup_token)
+
+    if not token_payload:
+        return None, "Invalid or expired password setup token"
+
+    email = token_payload.get("email", "").strip().lower()
+
+    user_id = token_payload.get("user_id")
 
     password = data.get("password", "").strip()
 
@@ -310,23 +370,39 @@ def handle_set_password(data, get_db):
             cur = conn.cursor()
 
             cur.execute("""
-                UPDATE users
-                SET password_hash = %s
-                WHERE email = %s
-            """, (
-                password_hash,
-                email
-            ))
-
-            cur.execute("""
-                SELECT user_id
+                SELECT
+                    email_verified,
+                    password_hash
                 FROM users
-                WHERE email = %s
-            """, (email,))
+                WHERE user_id = %s
+                    AND email = %s
+            """, (user_id, email,))
 
             user = cur.fetchone()
 
-            token = generate_token(user[0], email)
+            if not user:
+                return None, "User not found"
+
+            email_verified, existing_password_hash = user
+
+            if not email_verified:
+                return None, "Verify email first"
+
+            if existing_password_hash:
+                return None, "Password already set"
+
+            cur.execute("""
+                UPDATE users
+                SET
+                    password_hash = %s,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = %s
+            """, (
+                password_hash,
+                user_id
+            ))
+
+            token = generate_token(user_id, email)
 
             return {
                 "token": token,
@@ -335,9 +411,8 @@ def handle_set_password(data, get_db):
 
     except Exception as e:
         logger.error(e, exc_info=True)
-
         return None, "Internal server error"
-    
+
 def handle_google_login(google_token_payload, get_db):
     """
     Handle Google OAuth login.

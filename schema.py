@@ -8,23 +8,24 @@ SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS users (
     
     user_id UUID PRIMARY KEY,
-    username TEXT UNIQUE ,
+    username TEXT UNIQUE,
     email TEXT UNIQUE,
-    password_hash TEXT ,
+    password_hash TEXT,
     google_id TEXT UNIQUE,
     auth_method TEXT DEFAULT 'password',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     -- added for google auth on 27/5
     email_verified BOOLEAN DEFAULT FALSE,
     otp_hash TEXT,
     otp_expiry TIMESTAMP,
     reset_otp_hash TEXT,
-    reset_otp_expiry TIMESTAMP;
+    reset_otp_expiry TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_google_id ON users(google_id);
 
 

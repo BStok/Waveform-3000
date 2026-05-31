@@ -134,14 +134,14 @@ def login():
     """Login with username + password"""
     try:
         data = request.get_json(silent=True) or {}
-        token, username, error = handle_login(data, get_db)
+        token, email, error = handle_login(data, get_db)
         
         if error:
             logger.warning(f"[LOGIN] Failed: {error}")
             return jsonify({"error": error}), 401
         
-        logger.info(f"[LOGIN] ✓ {username}")
-        return jsonify({"token": token, "username": username})
+        logger.info(f"[LOGIN] success: {email}")
+        return jsonify({"token": token, "email": email})
     
     except Exception as e:
         logger.error(f"[LOGIN] Exception: {e}", exc_info=True)

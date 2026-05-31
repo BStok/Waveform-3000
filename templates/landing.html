@@ -6,6 +6,7 @@
 <title>WAVEFORM-3000 PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" type="image/jpg" href="assets\waveformfavicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
@@ -1421,41 +1422,8 @@ async function handleSignup() {
     status.textContent = '';
   }
 }
-// async function completeSignup() {
-//   const email = document.getElementById('email').value.trim();
-//   const password = document.getElementById('password').value.trim();
 
-//   const error = document.getElementById('authError');
-//   const status = document.getElementById('authStatus');
 
-//   try {
-//     status.textContent = 'CREATING ACCOUNT...';
-
-//     const res = await fetch(`${API}/auth/set-password`, {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ email, password })
-//     });
-
-//     const data = await res.json();
-//     if (!res.ok) throw new Error(data.error || 'Failed');
-
-//     localStorage.setItem('waveform_token', data.token);
-//     localStorage.setItem('waveform_user', data.email);
-
-//     status.textContent = 'ACCOUNT READY';
-
-//     setTimeout(() => {
-//       closeAuthModal();
-//       window.location.href = '/app';
-//     }, 800);
-
-//   } catch (e) {
-//     error.textContent = e.message;
-//     error.style.display = 'block';
-//     status.textContent = '';
-//   }
-// }
 // Allow Enter key
 document.addEventListener('keydown', (e) => {
   const modal = document.getElementById('authModal');
