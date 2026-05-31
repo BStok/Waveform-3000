@@ -932,14 +932,14 @@ body::after{
     </div>
     
   <div class="auth-input-group" id="passwordGroup" >
-    <input id="password" type="password" placeholder="SET PASSWORD">
+    <input id="password" type="password" placeholder="PASSWORD">
     </div>
 
     <div class="auth-input-group">
         <input id="otp" type="text" placeholder="OTP CODE" style="display:none;">
     </div>
     
-    <div class="auth-button-group">
+    <div class="auth-button-group" id="authButtons">
       <button class="auth-btn" onclick="signupFlow()">SIGN UP</button>
       <button class="auth-btn" onclick="handleLogin()">LOGIN</button>
     </div>
@@ -951,6 +951,15 @@ body::after{
         style="width:100%; margin-top:10px; display:none;"
         >
     VERIFY OTP
+    </button>
+
+    <button
+        class="auth-btn"
+        id="setPasswordBtn"
+        onclick="completeSignup()"
+        style="width:100%; margin-top:10px; display:none;"
+        >
+    SET PASSWORD
     </button>
     
     <div id="authError"></div>
@@ -1239,7 +1248,8 @@ SIGNAL IS ETERNAL. MUSIC IS THE UNIVERSE. WAVEFORM-3000 PRO IS YOUR PORTAL TO IN
 
 <script>
 const API = "/api";
-let authMode = "login"; // login | signup | verify
+let authMode = "login"; // login | verify | set-password
+let passwordSetupToken = "";
 
 // Modal control functions
 function openAuthModal() {
@@ -1258,8 +1268,14 @@ function closeAuthModal() {
 
   document.getElementById('otp').style.display = 'none';
   document.getElementById('verifyBtn').style.display = 'none';
+  document.getElementById('setPasswordBtn').style.display = 'none';
+  document.getElementById('authButtons').style.display = 'flex';
+  document.getElementById('passwordGroup').style.display = 'block';
+  document.getElementById('password').placeholder = 'PASSWORD';
+  document.getElementById('email').disabled = false;
 
   authMode = "login";
+  passwordSetupToken = "";
 }
 
 // Close modal when clicking outside
@@ -1351,15 +1367,23 @@ async function handleVerifyOTP() {
     if (!res.ok) {
       throw new Error(data.error || 'OTP verification failed');
     }
-    localStorage.setItem('waveform_token', data.token);
 
-    localStorage.setItem('waveform_user', data.email);
+    if (!data.setup_token) {
+      throw new Error('Password setup token missing');
+    }
 
-    status.textContent = 'ACCOUNT VERIFIED';
+    authMode = "set-password";
+    passwordSetupToken = data.setup_token;
 
-    setTimeout(() => {
-    window.location.href = '/app';
-    }, 1000);
+    status.textContent = 'EMAIL VERIFIED - SET PASSWORD';
+
+    document.getElementById('otp').style.display = 'none';
+    document.getElementById('verifyBtn').style.display = 'none';
+    document.getElementById('passwordGroup').style.display = 'block';
+    document.getElementById('password').placeholder = 'SET PASSWORD';
+    document.getElementById('password').value = '';
+    document.getElementById('setPasswordBtn').style.display = 'block';
+    document.getElementById('password').focus();
   } catch (e) {
 
     error.textContent = e.message;
@@ -1378,8 +1402,6 @@ async function handleSignup() {
 
   const email = document.getElementById('email').value.trim();
 
-  const password = document.getElementById('password').value.trim();
-
   const error = document.getElementById('authError');
 
   const status = document.getElementById('authStatus');
@@ -1396,8 +1418,7 @@ async function handleSignup() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email,
-        password
+        email
       })
     });
 
@@ -1409,9 +1430,16 @@ async function handleSignup() {
 
     status.textContent = 'OTP SENT';
 
+    authMode = "verify";
+
+    document.getElementById('email').disabled = true;
+    document.getElementById('password').value = '';
+    document.getElementById('passwordGroup').style.display = 'none';
+    document.getElementById('authButtons').style.display = 'none';
     document.getElementById('otp').style.display = 'block';
 
     document.getElementById('verifyBtn').style.display = 'block';
+    document.getElementById('otp').focus();
 
   } catch (e) {
 
@@ -1419,6 +1447,47 @@ async function handleSignup() {
 
     error.style.display = 'block';
 
+    status.textContent = '';
+  }
+}
+async function completeSignup() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  const error = document.getElementById('authError');
+  const status = document.getElementById('authStatus');
+
+  error.style.display = 'none';
+
+  try {
+    status.textContent = 'CREATING ACCOUNT...';
+
+    const res = await fetch(`${API}/auth/set-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        password,
+        setup_token: passwordSetupToken
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+
+    localStorage.setItem('waveform_token', data.token);
+    localStorage.setItem('waveform_user', data.email);
+
+    status.textContent = 'ACCOUNT READY';
+
+    setTimeout(() => {
+      closeAuthModal();
+      window.location.href = '/app';
+    }, 800);
+
+  } catch (e) {
+    error.textContent = e.message;
+    error.style.display = 'block';
     status.textContent = '';
   }
 }
@@ -1430,7 +1499,11 @@ document.addEventListener('keydown', (e) => {
   if (!modal.classList.contains('show')) return;
   
   if (e.key === 'Enter') {
-    if (document.getElementById('password') === document.activeElement) {
+    if (authMode === 'verify') {
+      handleVerifyOTP();
+    } else if (authMode === 'set-password') {
+      completeSignup();
+    } else if (document.getElementById('password') === document.activeElement) {
       handleLogin();
     } else if (document.getElementById('email') === document.activeElement) {
       document.getElementById('password').focus();
