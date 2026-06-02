@@ -4,7 +4,7 @@ services:
     name: waveform-3000
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    startCommand: "gunicorn app.main:app"
     envVars:
       - key: SECRET_KEY
         generateValue: true
