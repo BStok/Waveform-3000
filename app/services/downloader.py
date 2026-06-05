@@ -114,11 +114,11 @@ def run_download_job(job_id, user_id, songs):
         logger.info("[DOWNLOAD] Job %s started: %s songs", job_id, len(songs))
 
         ydl_opts = {
-            "format": "bestaudio[ext=m4a]/bestaudio/best",
+            "format": "bestaudio/best",
             "default_search": "ytsearch1",
             "extractor_args": {
                 "youtube": {
-                    "player_client": ["android_music", "web_creator"],
+                    "player_client": ["tv_embedded", "mweb"],
                 }
             },
             "postprocessors": [{
