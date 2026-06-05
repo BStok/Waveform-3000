@@ -6,7 +6,7 @@ PyJWT
 Werkzeug
 email-validator
 python-dotenv
-yt-dlp
 requests
 resend
 imageio-ffmpeg
+yt-dlp>=2024.11.18
