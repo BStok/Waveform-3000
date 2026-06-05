@@ -114,8 +114,13 @@ def run_download_job(job_id, user_id, songs):
         logger.info("[DOWNLOAD] Job %s started: %s songs", job_id, len(songs))
 
         ydl_opts = {
-            "format": "bestaudio/best",
+            "format": "bestaudio[ext=m4a]/bestaudio/best",
             "default_search": "ytsearch1",
+            "extractor_args": {
+                "youtube": {
+                    "player_client": ["android_music", "web_creator"],
+                }
+            },
             "postprocessors": [{
                 "key": "FFmpegExtractAudio",
                 "preferredcodec": "mp3",
@@ -128,6 +133,8 @@ def run_download_job(job_id, user_id, songs):
             "ffmpeg_location": get_ffmpeg_path(),
             "prefer_ffmpeg": True,
             "socket_timeout": 30,
+            "retries": 3,
+            "sleep_interval": 2,
         }
 
         cookies_file = get_youtube_cookies_file()

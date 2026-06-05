@@ -3,7 +3,7 @@ services:
   - type: web
     name: waveform-3000
     env: python
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: "apt-get install -y nodejs ffmpeg && pip install -r requirements.txt"
     startCommand: "gunicorn app.main:app"
     envVars:
       - key: SECRET_KEY
