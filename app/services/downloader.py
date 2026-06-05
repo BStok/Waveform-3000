@@ -137,12 +137,12 @@ def run_download_job(job_id, user_id, songs):
             "sleep_interval": 2,
         }
 
-        cookies_file = get_youtube_cookies_file()
-        if cookies_file:
-            ydl_opts["cookiefile"] = cookies_file
-            logger.info("[DOWNLOAD] Using YouTube cookies file")
-        else:
-            logger.warning("[DOWNLOAD] No YouTube cookies configured; YouTube may block Render downloads")
+        # cookies_file = get_youtube_cookies_file()
+        # if cookies_file:
+        #     ydl_opts["cookiefile"] = cookies_file
+        #     logger.info("[DOWNLOAD] Using YouTube cookies file")
+        # else:
+        #     logger.warning("[DOWNLOAD] No YouTube cookies configured; YouTube may block Render downloads")
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             for song_query in songs:
