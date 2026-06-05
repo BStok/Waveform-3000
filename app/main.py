@@ -75,11 +75,13 @@ def create_app():
 
     return flask_app
 
-
+print("MAIN.PY LOADED...")
+print("YOU CAN DO IT DIVA, KEEP GOINGGGGGGG")
 app = create_app()
 
 
 if __name__ == "__main__":
+    
     logger.info("Starting WAVEFORM-3000 PRO Server")
     get_ffmpeg_path()
     port = int(os.environ.get("PORT", 5000))
