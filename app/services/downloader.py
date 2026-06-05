@@ -106,6 +106,7 @@ def create_download_job(user_id, songs):
 
 
 def run_download_job(job_id, user_id, songs):
+    logger.error("DOWNLOAD JOB STARTED.....@____@")
     session_temp_dir = Config.TEMP_DIR / job_id
 
     try:
@@ -144,11 +145,13 @@ def run_download_job(job_id, user_id, songs):
         # else:
         #     logger.warning("[DOWNLOAD] No YouTube cookies configured; YouTube may block Render downloads")
 
+        logger.error("ABOUT TO CREATE YTDLP")
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             for song_query in songs:
                 if job_is_cancelled(job_id):
                     logger.info("[DOWNLOAD] Job %s cancelled", job_id)
                     break
+                logger.error("ABOUT TO DOWNLOAD SONG: %s", song_query)
                 download_one_song(ydl, job_id, user_id, song_query, session_temp_dir)
 
         mark_job_done(job_id)

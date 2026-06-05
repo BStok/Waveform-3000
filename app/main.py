@@ -66,10 +66,6 @@ def create_app():
 
     @flask_app.before_request
     def log_request():
-        logger.error("================================")
-        logger.error("YT-DLP VERSION = %s", yt_dlp.version.__version__)
-        logger.error("NODE PATH = %s", shutil.which("node"))
-
         try:
             result = subprocess.check_output(
                 ["node", "--version"],
