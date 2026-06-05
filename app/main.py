@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-
+print("TOP OF MAIN, THE ONLY PINNACLE WITHIN YOUR REACH")
 load_dotenv()
 
 import logging
@@ -66,8 +66,24 @@ def create_app():
 
     @flask_app.before_request
     def log_request():
-        logger.info("[%s] %s from %s", request.method, request.path, request.remote_addr)
+        logger.error("================================")
+        logger.error("YT-DLP VERSION = %s", yt_dlp.version.__version__)
+        logger.error("NODE PATH = %s", shutil.which("node"))
 
+        try:
+            result = subprocess.check_output(
+                ["node", "--version"],
+                text=True
+            ).strip()
+            logger.error("NODE VERSION = %s", result)
+        except Exception as e:
+            logger.error("NODE ERROR = %s", e)
+
+        logger.info("[%s] %s from %s",
+                    request.method,
+                    request.path,
+                    request.remote_addr)
+    
     @flask_app.after_request
     def log_response(response):
         logger.info("[%s] %s %s", response.status_code, request.method, request.path)
@@ -83,6 +99,7 @@ app = create_app()
 if __name__ == "__main__":
     
     logger.info("Starting WAVEFORM-3000 PRO Server")
+    
     get_ffmpeg_path()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
