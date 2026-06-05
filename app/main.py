@@ -4,8 +4,10 @@ load_dotenv()
 
 import logging
 import os
-import subprocess
 import yt_dlp
+
+import shutil
+import subprocess
 
 from flask import Flask, request
 
@@ -31,19 +33,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 #Diagnosis log for ytdlp
+logger.info("Node executable: %s", shutil.which("node"))
+
 try:
-    node_ver = subprocess.check_output(
+    result = subprocess.check_output(
         ["node", "--version"],
         text=True
     ).strip()
-    logger.info(f"Node.js found: {node_ver}")
+    logger.info("Node version: %s", result)
 except Exception as e:
-    logger.error(f"Node.js NOT found: {e}")
-
-try:
-    logger.info(f"yt-dlp version: {yt_dlp.version.__version__}")
-except Exception as e:
-    logger.error(f"yt-dlp version check failed: {e}")
+    logger.error("Node check failed: %s", e)
+logger.info("yt-dlp version: %s", yt_dlp.version.__version__)
 
 def create_app():
     Config.ensure_directories()
